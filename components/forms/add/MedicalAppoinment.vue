@@ -152,6 +152,15 @@
         </v-col>
         <v-col cols="12" md="4">
           <v-checkbox
+            v-model="data.def"
+            label="Def"
+            color="primary"
+            hide-details
+            dense
+          ></v-checkbox>
+        </v-col>
+        <v-col cols="12" md="4">
+          <v-checkbox
             v-model="data.breastfeedingAdvice"
             label="Consejo de lactancia"
             color="primary"
@@ -175,7 +184,7 @@
           <v-btn block dark color="secondary">Cancelar</v-btn>
         </v-col> -->
         <v-col cols="12" md="5">
-          <v-btn block :disabled="!valid" color="secondary" type="submit">
+          <v-btn block :disabled="!valid" color="primary" type="submit">
             {{ formData.code ? "Editar" : "Guardar" }}
           </v-btn>
         </v-col>
@@ -212,6 +221,7 @@ export default {
           psychiatry: false,
           psicology: false,
           breastfeedingAdvice: false,
+          def: false,
           assisten: null,
         };
       },
@@ -233,6 +243,7 @@ export default {
       this.data.breastfeedingAdvice = val;
       this.data.nutritionist = val;
       this.data.psychiatry = val;
+      this.data.def = val;
     },
   },
   data: () => ({
@@ -272,7 +283,29 @@ export default {
   },
   methods: {
     submit() {
-      alert("guardado perfecto papa");
+      this.$axios
+        .post("api/appointment", {
+          params: {
+            pediatrics: this.data.pediatrics,
+            nutritionist: this.data.nutritionist,
+            psychiatry: this.data.psychiatry,
+            breastfeedingAdvice: this.data.breastfeedingAdvice,
+            def: this.data.def,
+            representativeFirstName: this.data.representative.firstName,
+            representativeLastName: this.data.representative.lastName,
+            representativeNumberPhone: this.data.representative.numberPhone,
+            representativeDirection: this.data.representative.direction,
+            patientFirstName: this.data.patient.firstName,
+            patientLastName: this.data.patient.lastName,
+            patientBornDate: this.data.patient.bornDate,
+          },
+        })
+        .then((response) => {
+          console.log(response.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
     cancel() {
       this.$emit("cancel", false);
@@ -284,5 +317,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

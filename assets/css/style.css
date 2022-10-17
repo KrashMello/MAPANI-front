@@ -1,4 +1,4 @@
-.nav {
+/* .nav {
   background: #4c6ef8 !important;
   color: #fff !important;
 }
@@ -9,12 +9,12 @@
 
 .nav a:hover {
   background-color: #14256a !important;
-}
+} */
 
 .log {
   padding: 30px 0 !important;
   margin: 0 auto !important;
-  background: url(../../static/background.jpg) no-repeat !important;
+  background: url(../../static/background.png) no-repeat !important;
   background-size: cover !important;
   min-height: 100vh !important;
   display: -webkit-box !important;
@@ -24,7 +24,7 @@
   -ms-flex-align: center !important;
   align-items: center !important;
 }
-
+/* 
 .card-wrapper {
   width: 410px !important;
   margin: 20px auto 0 auto !important;
@@ -32,5 +32,5 @@
   box-shadow: 0 0 40px rgba(0, 0, 0, 0.05) !important;
   border-radius: 5px !important;
   background: rgb(255, 255, 255, 0.7) !important;
-}
+} */
 

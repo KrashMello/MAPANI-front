@@ -43,6 +43,15 @@ export default {
   axios: {
     // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
     baseURL: "/",
+    proxy: true,
+  },
+  proxy: {
+    "/api/": {
+      target: "http://localhost:5000/",
+      pathRewrite: { "^/api/": "" },
+      changeOrigin: true,
+    },
+    // '/api2/': 'http://api.another-website.com'
   },
 
   // PWA module configuration: https://go.nuxtjs.dev/pwa
@@ -63,9 +72,9 @@ export default {
       dark: false,
       themes: {
         dark: {
-          primary: "#4c6ef8",
-          accent: "#14256a",
-          secondary: "#0088cc",
+          primary: "#6eb532",
+          accent: "#21360f",
+          secondary: "#8bc45b",
           info: "#90A4AE",
           warning: "#ed9c28",
           error: "#d2322d",
@@ -73,9 +82,9 @@ export default {
           danger: "#d2322d",
         },
         light: {
-          primary: "#4c6ef8",
-          accent: "#14256a",
-          secondary: "#0088cc",
+          primary: "#6eb532",
+          accent: "#21360f",
+          secondary: "#fff",
           info: "#90A4AE",
           warning: "#ed9c28",
           error: "#d2322d",

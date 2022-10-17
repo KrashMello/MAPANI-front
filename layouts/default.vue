@@ -1,8 +1,14 @@
 <template>
   <v-app dark>
-    <v-app-bar :clipped-left="clipped" fixed app elevate-on-scroll>
+    <v-app-bar
+      color="secondary"
+      :clipped-left="clipped"
+      fixed
+      app
+      elevate-on-scroll
+    >
       <v-toolbar-title>
-        <img width="25%" src="/logo-light.png" />
+        <img width="19%" src="/logo-light.png" />
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
@@ -12,7 +18,7 @@
       <v-btn icon>
         <v-icon>mdi-bell</v-icon>
       </v-btn> -->
-      <v-list dense class="py-0" width="260">
+      <v-list color="secondary" dense class="py-0" width="260">
         <v-menu offset-y>
           <template #activator="{ on, attrs }">
             <v-list-item v-bind="attrs" v-on="on" class="px-0">
@@ -36,7 +42,7 @@
               </v-list-item-action>
             </v-list-item>
           </template>
-          <v-list>
+          <v-list color="secondary">
             <v-list-item to="/panel/usuarios">
               <v-list-item-title>
                 <v-icon> mdi-shield-account </v-icon>
@@ -66,25 +72,23 @@
       :clipped="clipped"
       fixed
       app
-      class="nav"
+      color="primary"
+      dark
     >
       <!-- list item -->
-      <v-list>
-        <v-list-item
-          v-for="(item, i) in modules"
-          :key="i"
-          :to="item.to"
-          router
-          exact
-        >
-          <v-list-item-action>
-            <v-icon color="white">{{ item.icon }}</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
+      <v-list shaped dense>
+        <v-list-item-group color="accent">
+          <v-list-item v-for="(item, i) in modules" :key="i" :to="item.to">
+            <v-list-item-icon>
+              <v-icon>{{ item.icon }}</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>{{ item.title }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-item-group>
       </v-list>
+
       <!-- logout -->
       <template #append>
         <div class="pa-2">
@@ -97,8 +101,8 @@
     </v-navigation-drawer>
     <!-- main -->
     <v-main>
-      <v-toolbar class="nav">
-        <v-app-bar-nav-icon color="white" @click.stop="drawer = !drawer" />
+      <v-toolbar color="primary" dark>
+        <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
         <v-toolbar-title>{{ routeTitle }}</v-toolbar-title>
       </v-toolbar>
       <v-container>
@@ -119,6 +123,7 @@ export default {
       fixed: false,
       miniVariant: false,
       right: true,
+      selectedModule: 1,
       rightDrawer: false,
       title: "Vuetify.js",
     };

@@ -1,8 +1,14 @@
 <template>
-  <v-form @submit.prevent="checkForm" ref="form" lazy-validation class="pa-5">
+  <v-form
+    :disabled="loading"
+    @submit.prevent="checkForm"
+    ref="form"
+    lazy-validation
+    class="pa-5"
+  >
     <v-text-field
       v-model="data.username"
-      color="secondary"
+      color="primary"
       :rules="rules.username"
       label="Nombre de usuario"
       outlined
@@ -13,7 +19,7 @@
 
     <v-text-field
       v-model="data.password"
-      color="secondary"
+      color="primary"
       :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
       :rules="rules.password"
       required
@@ -32,7 +38,14 @@
       </v-alert>
     </v-expand-transition>
 
-    <v-btn block rounded depressed color="secondary" type="submit">
+    <v-btn
+      :disabled="loading"
+      block
+      rounded
+      depressed
+      color="primary"
+      type="submit"
+    >
       Ingresar
     </v-btn>
   </v-form>
@@ -42,6 +55,12 @@
 import { mapGetters, mapActions } from "vuex";
 export default {
   name: "loginForm",
+  props: {
+    loading: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data: () => ({
     showPassword: false,
     data: {

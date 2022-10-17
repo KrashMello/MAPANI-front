@@ -1,25 +1,74 @@
 <template>
-  <v-card class="fill-height">
-    <v-card-title> Tabla de personas </v-card-title>
-    <v-divider></v-divider>
-    <v-container>
-      <v-row class="mb-2">
-        <v-btn
-          color="secondary"
-          dark
-          @click="
-            dialog.show = !dialog.show;
-            dialog.formAdd = true;
-          "
-        >
-          Agendar Cita
-          <v-icon dark right>mdi-plus</v-icon>
-        </v-btn>
-        <v-spacer></v-spacer>
-        <v-btn color="secondary" dark>
-          Buscar
-          <v-icon dark right>mdi-magnify</v-icon>
-        </v-btn>
+  <div>
+    <v-container class="fill-height">
+      <v-row class="mb-2" justify="space-between">
+        <v-col cols="12" md="2">
+          <v-btn
+            color="primary"
+            dark
+            block
+            rounded
+            @click="
+              dialog.show = !dialog.show;
+              dialog.formAdd = true;
+            "
+          >
+            Agendar Cita
+            <v-icon dark right>mdi-plus</v-icon>
+          </v-btn>
+        </v-col>
+        <v-col cols="12" md="2">
+          <v-btn color="primary" rounded block dark>
+            Buscar
+            <v-icon dark right>mdi-magnify</v-icon>
+          </v-btn>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="12">
+          <v-card rounded="xl">
+            <v-card-text>
+              <v-simple-table dense>
+                <template #default>
+                  <thead>
+                    <tr>
+                      <th class="text-left">Codigo</th>
+                      <th class="text-left">
+                        Nombre y apellido del representante
+                      </th>
+                      <th class="text-left">Nombre y apellido del paciente</th>
+                      <th class="text-left">Fecha pautada</th>
+                      <th class="text-left">acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      v-for="(item, i) in appointment"
+                      :key="item.code"
+                      @mouseover="selectItem(i)"
+                      @mouseleave="unSelectItem()"
+                    >
+                      <td>{{ item.code }}</td>
+                      <td>
+                        {{ item.representativeFirstName }}
+                        {{ item.representativeLastName }}
+                      </td>
+                      <td>
+                        {{ item.patientFirstName }} {{ item.patientLastName }}
+                      </td>
+                      <td>{{ item.appointmentDate }}</td>
+                      <td v-show="selectedItemTable === i">
+                        <v-btn icon small color="warning">
+                          <v-icon>mdi-pencil</v-icon>
+                        </v-btn>
+                      </td>
+                    </tr>
+                  </tbody>
+                </template>
+              </v-simple-table>
+            </v-card-text>
+          </v-card>
+        </v-col>
       </v-row>
     </v-container>
     <DialogForm
@@ -33,26 +82,7 @@
         ></FormsAddMedicalAppoinment>
       </template>
     </DialogForm>
-    <v-data-table :headers="headers" :items="Persons" :items-per-page="5">
-      <template #[`item.actions`]="{ item }">
-        <v-btn icon>
-          <v-icon small> mdi-eye </v-icon>
-        </v-btn>
-        <v-btn
-          icon
-          @click="
-            dialog.show = !dialog.show;
-            dialog.formAdd = false;
-          "
-        >
-          <v-icon small> mdi-pencil </v-icon>
-        </v-btn>
-        <v-btn icon @click="deleteItem(item)">
-          <v-icon small> mdi-delete </v-icon>
-        </v-btn>
-      </template>
-    </v-data-table>
-  </v-card>
+  </div>
 </template>
 <script>
 import { mapGetters, mapMutations } from "vuex";
@@ -64,6 +94,8 @@ export default {
         show: false,
         formAdd: true,
       },
+      selectedItemTable: -1,
+      appointment: [],
       headers: [
         { text: "Nacionalidad", value: "documentType", sortable: false },
         { text: "Cedula", value: "DNI" },
@@ -82,9 +114,33 @@ export default {
     closeDialog(data) {
       this.dialog.show = data;
     },
+    selectItem(i) {
+      this.selectedItemTable = i;
+    },
+    unSelectItem() {
+      this.selectedItemTable = -1;
+    },
   },
   created() {
     this.changePageTitle("Citas");
+    this.$axios
+      .get("api/appointment")
+      .then((response) => {
+        this.appointment = response.data;
+        // console.log(response.data)
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   },
 };
 </script>
+<style lang="scss" scoped>
+tr > .actionButtons {
+  display: none;
+}
+
+tr:hover > .actionButtons {
+  display: block;
+}
+</style>
