@@ -177,7 +177,7 @@ export default {
       .get("api/appointment")
       .then((response) => {
         this.appointment = response.data;
-        // console.log(response.data)
+        console.log(response.data)
       })
       .catch((err) => {
         console.log(err);

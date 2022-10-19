@@ -59,6 +59,10 @@ export default {
     manifest: {
       lang: "en",
     },
+     icon:{
+      source: '/static/icon.png',
+      fileName: 'icon.png'
+    },
   },
 
   router: {
