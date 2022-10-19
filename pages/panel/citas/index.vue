@@ -43,9 +43,9 @@
                   </thead>
                   <tbody>
                     <tr
-                      v-for="(item, i) in appointment"
+                      v-for="item in appointment"
                       :key="item.code"
-                      @mouseover="selectItem(i)"
+                      @mouseover="selectItem(item.code)"
                       @mouseleave="unSelectItem()"
                     >
                       <td>{{ item.code }}</td>
@@ -57,8 +57,14 @@
                         {{ item.patientFirstName }} {{ item.patientLastName }}
                       </td>
                       <td>{{ item.appointmentDate }}</td>
-                      <td v-show="selectedItemTable === i">
-                        <v-btn icon small color="warning">
+                      <td>
+                        <v-btn
+                          v-if="selectedItemTable === item.code"
+                          icon
+                          small
+                          color="warning"
+                          @click="modifyAppointment(item)"
+                        >
                           <v-icon>mdi-pencil</v-icon>
                         </v-btn>
                       </td>
@@ -72,13 +78,20 @@
       </v-row>
     </v-container>
     <DialogForm
-      :title="dialog.formAdd === true ? 'Agendar Nueva Cita' : 'Modificar Cita'"
+      :title="
+        dialog.formAdd === true
+          ? 'Agendar Nueva Cita'
+          : 'Modificar Cita ' + formData.code
+      "
       :dialog="dialog.show"
       @close="closeDialog"
     >
       <template #form>
         <FormsAddMedicalAppoinment
-          :dialogIsEnable="dialog.show"
+          :dialog-is-enable="dialog.show"
+          :is-aggregated="dialog.formAdd"
+          :form-data="formData"
+          @close="closeDialog"
         ></FormsAddMedicalAppoinment>
       </template>
     </DialogForm>
@@ -94,8 +107,24 @@ export default {
         show: false,
         formAdd: true,
       },
-      selectedItemTable: -1,
+      selectedItemTable: null,
       appointment: [],
+      formData: {
+        representativeFirstName: "",
+        representativeLastName: "",
+        representativeNumberPhone: "",
+        representativeDirection: "",
+        patientFirstName: "",
+        patientLastName: "",
+        patientBornDate: "",
+        pediatrics: false,
+        nitritionist: false,
+        psychiatry: false,
+        psicology: false,
+        breastfeedingAdvice: false,
+        def: false,
+        assisten: null,
+      },
       headers: [
         { text: "Nacionalidad", value: "documentType", sortable: false },
         { text: "Cedula", value: "DNI" },
@@ -113,12 +142,33 @@ export default {
     ...mapMutations(["changePageTitle"]),
     closeDialog(data) {
       this.dialog.show = data;
+      this.formData = {
+        representativeFirstName: "",
+        representativeLastName: "",
+        representativeNumberPhone: "",
+        representativeDirection: "",
+        patientFirstName: "",
+        patientLastName: "",
+        patientBornDate: "",
+        pediatrics: false,
+        nitritionist: false,
+        psychiatry: false,
+        psicology: false,
+        breastfeedingAdvice: false,
+        def: false,
+        assisten: null,
+      };
+    },
+    modifyAppointment(appointment) {
+      this.formData = appointment;
+      this.dialog.show = !this.dialog.show;
+      this.dialog.formAdd = false;
     },
     selectItem(i) {
       this.selectedItemTable = i;
     },
     unSelectItem() {
-      this.selectedItemTable = -1;
+      this.selectedItemTable = null;
     },
   },
   created() {

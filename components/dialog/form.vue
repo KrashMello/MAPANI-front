@@ -1,6 +1,6 @@
 <template>
   <v-dialog v-model="cDialog" persistent max-width="75%">
-    <v-card class="overflow-hidden">
+    <v-card class="overflow-hidden" rounded="xl">
       <v-app-bar
         absolute
         dark
@@ -58,5 +58,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

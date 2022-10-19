@@ -5,7 +5,7 @@
       <v-row>
         <v-col cols="12" md="6">
           <v-text-field
-            v-model="data.representative.firstName"
+            v-model="data.representativeFirstName"
             label="Nombres"
             v-mask="upperCaseMask"
             outlined
@@ -16,7 +16,7 @@
         </v-col>
         <v-col cols="12" md="6">
           <v-text-field
-            v-model="data.representative.lastName"
+            v-model="data.representativeLastName"
             label="Apellidos"
             v-mask="upperCaseMask"
             placeholder="Introduzca los 2 apellidos"
@@ -28,7 +28,7 @@
         </v-col>
         <v-col cols="12" md="6">
           <v-text-field
-            v-model="data.representative.numberPhone"
+            v-model="data.representativeNumberPhone"
             label="Numero de telefono"
             outlined
             v-mask="'(####) ###-##-##'"
@@ -39,7 +39,7 @@
         </v-col>
         <v-col cols="12" md="6">
           <v-text-field
-            v-model="data.representative.direction"
+            v-model="data.representativeDirection"
             label="Direccion"
             placeholder="Introduzca la direccion"
             v-mask="upperCaseMask"
@@ -55,7 +55,7 @@
       <v-row>
         <v-col cols="12" md="6">
           <v-text-field
-            v-model="data.patient.firstName"
+            v-model="data.patientFirstName"
             label="Nombres"
             v-mask="upperCaseMask"
             outlined
@@ -66,7 +66,7 @@
         </v-col>
         <v-col cols="12" md="6">
           <v-text-field
-            v-model="data.patient.lastName"
+            v-model="data.patientLastName"
             label="Apellidos"
             v-mask="upperCaseMask"
             placeholder="Introduzca los 2 apellidos"
@@ -87,7 +87,7 @@
           >
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
-                v-model="data.patient.bornDate"
+                v-model="data.patientBornDate"
                 label="Birthday date"
                 prepend-icon="mdi-calendar"
                 readonly
@@ -98,7 +98,7 @@
               ></v-text-field>
             </template>
             <v-date-picker
-              v-model="data.patient.bornDate"
+              v-model="data.patientBornDate"
               :active-picker="activePicker"
               :max="
                 new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
@@ -201,21 +201,18 @@ export default {
       type: Boolean,
       default: false,
     },
+    isAggregated: { type: Boolean, default: false },
     formData: {
       type: Object,
       default() {
         return {
-          representative: {
-            firstName: "",
-            lastName: "",
-            numberPhone: "",
-            direction: "",
-          },
-          patient: {
-            firstName: "",
-            lastName: "",
-            bornDate: "",
-          },
+          representativeFirstName: "",
+          representativeLastName: "",
+          representativeNumberPhone: "",
+          representativeDirection: "",
+          patientFirstName: "",
+          patientLastName: "",
+          patientBornDate: "",
           pediatrics: false,
           nitritionist: false,
           psychiatry: false,
@@ -283,29 +280,32 @@ export default {
   },
   methods: {
     submit() {
-      this.$axios
-        .post("api/appointment", {
-          params: {
-            pediatrics: this.data.pediatrics,
-            nutritionist: this.data.nutritionist,
-            psychiatry: this.data.psychiatry,
-            breastfeedingAdvice: this.data.breastfeedingAdvice,
-            def: this.data.def,
-            representativeFirstName: this.data.representative.firstName,
-            representativeLastName: this.data.representative.lastName,
-            representativeNumberPhone: this.data.representative.numberPhone,
-            representativeDirection: this.data.representative.direction,
-            patientFirstName: this.data.patient.firstName,
-            patientLastName: this.data.patient.lastName,
-            patientBornDate: this.data.patient.bornDate,
-          },
-        })
-        .then((response) => {
-          console.log(response.data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      if (this.isAggregated) {
+        this.$axios
+          .post("api/appointment", {
+            params: {
+              pediatrics: this.data.pediatrics,
+              nutritionist: this.data.nutritionist,
+              psychiatry: this.data.psychiatry,
+              breastfeedingAdvice: this.data.breastfeedingAdvice,
+              def: this.data.def,
+              representativeFirstName: this.data.representativeFirstName,
+              representativeLastName: this.data.representativeLastName,
+              representativeNumberPhone: this.data.representativeNumberPhone,
+              representativeDirection: this.data.representativeDirection,
+              patientFirstName: this.data.patientFirstName,
+              patientLastName: this.data.patientLastName,
+              patientBornDate: this.data.patientBornDate,
+            },
+          })
+          .then((response) => {
+            this.$emit("close", false);
+            console.log(response.data);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
     },
     cancel() {
       this.$emit("cancel", false);
