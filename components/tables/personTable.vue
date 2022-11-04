@@ -28,7 +28,11 @@
       </template>
     </v-data-table>
 
-    <DialogAddPerson :dialogo="dialog" :valueItem="valueItem" @close="closeDialog" />
+    <DialogAddPerson
+      :dialogo="dialog"
+      :valueItem="valueItem"
+      @close="closeDialog"
+    />
 
     <v-dialog v-model="dialogDelete" max-width="500px">
       <v-card>

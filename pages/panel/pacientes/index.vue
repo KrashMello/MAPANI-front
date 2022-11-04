@@ -13,7 +13,7 @@
               dialog.formAdd = true;
             "
           >
-            Agendar Cita
+            Agendar Paciente
             <v-icon dark right>mdi-plus</v-icon>
           </v-btn>
         </v-col>
@@ -33,37 +33,35 @@
                   <thead>
                     <tr>
                       <th class="text-left">Codigo</th>
-                      <th class="text-left">
-                        Nombre y apellido del representante
-                      </th>
-                      <th class="text-left">Nombre y apellido del paciente</th>
-                      <th class="text-left">Fecha pautada</th>
+                      <th class="text-left">Nombre y apellido</th>
+                      <th class="text-left">Fecha de nacimiento</th>
+                      <th class="text-left">Genero</th>
                       <th class="text-left">acciones</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr
-                      v-for="item in appointment"
+                      v-for="item in patients"
                       :key="item.code"
                       @mouseover="selectItem(item.code)"
                       @mouseleave="unSelectItem()"
                     >
                       <td>{{ item.code }}</td>
                       <td>
-                        {{ item.representativeFirstName }}
-                        {{ item.representativeLastName }}
+                        {{ item.firstName }}
+                        {{ item.lastName }}
                       </td>
                       <td>
-                        {{ item.patientFirstName }} {{ item.patientLastName }}
+                        {{ item.bornDate }}
                       </td>
-                      <td>{{ item.appointmentDate }}</td>
+                      <td>{{ item.gender }}</td>
                       <td>
                         <v-btn
                           v-if="selectedItemTable === item.code"
                           icon
                           small
                           color="warning"
-                          @click="modifyAppointment(item)"
+                          @click="modifyPatient(item)"
                         >
                           <v-icon>mdi-pencil</v-icon>
                         </v-btn>
@@ -87,20 +85,20 @@
       @close="closeDialog"
     >
       <template #form>
-        <FormsAddMedicalAppoinment
+        <FormsAddPatient
           :dialog-is-enable="dialog.show"
           :is-aggregated="dialog.formAdd"
           :form-data="formData"
           @close="closeDialog"
-        ></FormsAddMedicalAppoinment>
+        ></FormsAddPatient>
       </template>
     </DialogForm>
   </div>
 </template>
 <script>
-import { mapGetters, mapMutations } from "vuex";
+import { mapMutations } from "vuex";
 export default {
-  name: "citasPanel",
+  name: "pacientePanel",
   data() {
     return {
       dialog: {
@@ -108,59 +106,39 @@ export default {
         formAdd: true,
       },
       selectedItemTable: null,
-      appointment: [],
+      patients: [],
       formData: {
-        representativeFirstName: "",
-        representativeLastName: "",
-        representativeNumberPhone: "",
-        representativeDirection: "",
-        patientFirstName: "",
-        patientLastName: "",
-        patientBornDate: "",
-        pediatrics: false,
-        nitritionist: false,
-        psychiatry: false,
-        psicology: false,
-        breastfeedingAdvice: false,
-        def: false,
-        assisten: null,
+        code: null,
+        firstName: "",
+        lastName: "",
+        bornDate: "",
+        genderCode: "",
+        birthCertificate: false,
+        disability: false,
+        disabilityType: [],
       },
-      headers: [
-        { text: "Nacionalidad", value: "documentType", sortable: false },
-        { text: "Cedula", value: "DNI" },
-        { text: "Nombres", value: "firstName", sortable: false },
-        { text: "Apellidos", value: "lastName", sortable: false },
-        { text: "Correo", value: "email", sortable: false },
-        { text: "Opciones", value: "actions", sortable: false },
-      ],
     };
   },
   computed: {
-    ...mapGetters({ Persons: "persons" }),
+    // ...mapGetters({ Persons: "persons" }),
   },
   methods: {
     ...mapMutations(["changePageTitle"]),
     closeDialog(data) {
       this.dialog.show = data;
       this.formData = {
-        representativeFirstName: "",
-        representativeLastName: "",
-        representativeNumberPhone: "",
-        representativeDirection: "",
-        patientFirstName: "",
-        patientLastName: "",
-        patientBornDate: "",
-        pediatrics: false,
-        nitritionist: false,
-        psychiatry: false,
-        psicology: false,
-        breastfeedingAdvice: false,
-        def: false,
-        assisten: null,
+        code: null,
+        firstName: "",
+        lastName: "",
+        bornDate: "",
+        genderCode: "",
+        birthCertificate: false,
+        disability: false,
+        disabilityType: [],
       };
     },
-    modifyAppointment(appointment) {
-      this.formData = appointment;
+    modifyPatient(patient) {
+      this.formData = patient;
       this.dialog.show = !this.dialog.show;
       this.dialog.formAdd = false;
     },
@@ -172,11 +150,11 @@ export default {
     },
   },
   created() {
-    this.changePageTitle("Citas");
+    this.changePageTitle("Pacientes");
     this.$axios
-      .get("api/appointment")
+      .get("api/patient")
       .then((response) => {
-        this.appointment = response.data;
+        this.patients = response.data;
         // console.log(response.data)
       })
       .catch((err) => {

@@ -119,7 +119,7 @@ export default {
 
   computed: {
     ...mapGetters({
-      Requests: "requests", 
+      Requests: "requests",
     }),
   },
 

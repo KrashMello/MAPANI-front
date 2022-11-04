@@ -18,7 +18,7 @@ export default {
     });
     context.commit("saveRequests");
   },
-  findApplicant({ commit, getters }, [documentType, DNI]) { 
+  findApplicant({ commit, getters }, [documentType, DNI]) {
     let findByDNI = undefined;
     let response = undefined;
 
@@ -36,7 +36,7 @@ export default {
         code: 1,
         type: "success",
         message: response,
-      }); 
+      });
     }
   },
   closeFindApplicant({ commit }) {

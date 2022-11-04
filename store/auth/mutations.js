@@ -15,7 +15,7 @@ export default {
         state.auth.personData = "";
         state.auth.carge = "";
         state.auth.permission = "";
-      }, 1000); 
+      }, 1000);
     }
   },
 };

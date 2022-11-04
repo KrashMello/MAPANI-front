@@ -52,6 +52,18 @@ const defaultState = {
       title: "Citas",
       to: "/panel/citas",
     },
+    {
+      code: "MOD_009",
+      icon: "mdi-list-box-outline",
+      title: "Proyectos",
+      to: "/panel/proyectos",
+    },
+    {
+      code: "MOD_010",
+      icon: "mdi-account-injury",
+      title: "Pacientes",
+      to: "/panel/pacientes",
+    },
   ],
 };
 

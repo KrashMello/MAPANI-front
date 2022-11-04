@@ -1,10 +1,10 @@
 export default {
   updateApplicant(state, [personData, Found]) {
-    state.request.applicant.Found = Found; 
+    state.request.applicant.Found = Found;
 
     console.log(personData);
     if (Found) {
-      state.request.applicant.code = personData.code; 
+      state.request.applicant.code = personData.code;
       state.request.applicant.DNI = personData.DNI;
       state.request.applicant.documentType = personData.documentType;
       state.request.applicant.fullName = personData.fullName;

@@ -32,12 +32,14 @@ const defaultState = {
       martialStatus: "",
       email: "",
     },
-    requestData: [{
-      typeOfAid: "", 
-      dependencies: "", 
-      requirements: "", 
-      degreeOfVulnerability: "",
-    }],
+    requestData: [
+      {
+        typeOfAid: "",
+        dependencies: "",
+        requirements: "",
+        degreeOfVulnerability: "",
+      },
+    ],
     beneficiary: {
       Found: false,
       code: "",

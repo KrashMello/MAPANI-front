@@ -12,7 +12,7 @@ export default {
       setTimeout(() => {
         commit("changeStatus", {
           code: 1,
-          message: "Nombre de usuario o clave incorrecta", 
+          message: "Nombre de usuario o clave incorrecta",
         });
         commit("changeLoadingState", false);
       }, 1000);

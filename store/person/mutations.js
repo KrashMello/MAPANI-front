@@ -2,7 +2,19 @@ export default {
   savePersons(state) {
     localStorage.setItem("_persons_", JSON.stringify(state.persons));
   },
-  addPersons(state, { documentType, DNI, firstName, lastName, homeTelephone, personalPhone, martialStatus, email }) {
+  addPersons(
+    state,
+    {
+      documentType,
+      DNI,
+      firstName,
+      lastName,
+      homeTelephone,
+      personalPhone,
+      martialStatus,
+      email,
+    }
+  ) {
     let code,
       flag = true;
     while (flag) {
@@ -16,9 +28,9 @@ export default {
       documentType,
       firstName,
       lastName,
-      homeTelephone, 
-      personalPhone, 
-      martialStatus, 
+      homeTelephone,
+      personalPhone,
+      martialStatus,
       email,
       done: false,
     });
@@ -28,7 +40,20 @@ export default {
       (findPerson) => findPerson.code !== code
     );
   },
-  editPersons(state, { code, documentType, DNI, firstName, lastName, homeTelephone, personalPhone, martialStatus, email }) {
+  editPersons(
+    state,
+    {
+      code,
+      documentType,
+      DNI,
+      firstName,
+      lastName,
+      homeTelephone,
+      personalPhone,
+      martialStatus,
+      email,
+    }
+  ) {
     state.persons = state.persons.map((findPerson) => {
       if (findPerson.code === code) {
         findPerson.documentType = documentType;
@@ -37,7 +62,7 @@ export default {
         findPerson.lastName = lastName;
         findPerson.homeTelephone = homeTelephone;
         findPerson.personalPhone = personalPhone;
-        findPerson.martialStatus = martialStatus; 
+        findPerson.martialStatus = martialStatus;
         findPerson.email = email;
       }
       return findPerson;

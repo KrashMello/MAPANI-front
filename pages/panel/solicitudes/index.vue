@@ -18,12 +18,12 @@
 <script>
 import { mapMutations } from "vuex";
 export default {
-    name: "SolicitudesPanel",
-    methods: {
-        ...mapMutations(["changePageTitle"]),
-    },
-    created() {
-        this.changePageTitle("Solicitudes");
-    },
+  name: "SolicitudesPanel",
+  methods: {
+    ...mapMutations(["changePageTitle"]),
+  },
+  created() {
+    this.changePageTitle("Solicitudes");
+  },
 };
 </script>

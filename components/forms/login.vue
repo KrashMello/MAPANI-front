@@ -85,7 +85,6 @@ export default {
 
   computed: {
     ...mapGetters({
-      loading: "getLoadingLogin",
       status: "getStatus",
     }),
   },

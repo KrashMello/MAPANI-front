@@ -3,7 +3,7 @@ import getters from "./getters";
 import mutations from "./mutations";
 
 const defaultState = {
-  persons: [ 
+  persons: [
     {
       code: "ps-00000001",
       DNI: "25894595",
