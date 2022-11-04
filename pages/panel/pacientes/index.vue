@@ -13,7 +13,7 @@
               dialog.formAdd = true;
             "
           >
-            Agendar Paciente
+            Agregar Paciente
             <v-icon dark right>mdi-plus</v-icon>
           </v-btn>
         </v-col>
@@ -78,8 +78,8 @@
     <DialogForm
       :title="
         dialog.formAdd === true
-          ? 'Agendar Nueva Cita'
-          : 'Modificar Cita ' + formData.code
+          ? 'Registrar Paciente'
+          : 'Modificar Paciente ' + formData.code
       "
       :dialog="dialog.show"
       @close="closeDialog"
@@ -115,7 +115,12 @@ export default {
         genderCode: "",
         birthCertificate: false,
         disability: false,
-        disabilityType: [],
+        disabilityTypes: {
+            motor: false,
+            visual: false,
+            cognitive: false,
+            auditive: false,
+          },
       },
     };
   },
@@ -134,7 +139,12 @@ export default {
         genderCode: "",
         birthCertificate: false,
         disability: false,
-        disabilityType: [],
+        disabilityTypes: {
+            motor: false,
+            visual: false,
+            cognitive: false,
+            auditive: false,
+          },
       };
     },
     modifyPatient(patient) {
@@ -153,8 +163,9 @@ export default {
     this.changePageTitle("Pacientes");
     this.$axios
       .get("api/patient")
-      .then((response) => {
+    .then((response) => {
         this.patients = response.data;
+
         // console.log(response.data)
       })
       .catch((err) => {

@@ -3,7 +3,7 @@
     <v-container class="mt-3">
       <v-card-title>Datos del pasiente</v-card-title>
       <v-row v-if="isAggregated">
-        <v-col cols="4">
+        <v-col cols="6">
           <v-checkbox
             v-model="showCode"
             label="El paciente posee un codigo"
@@ -22,8 +22,8 @@
               label="Codigo MAPANI"
               outlined
               dense
+              :disable="!isAggregated"
               placeholder="Introduzca el codigo MAPANI del paciente"
-              :rules="rules.defaultText"
             ></v-text-field>
           </v-expand-transition>
         </v-col>
@@ -123,9 +123,52 @@
         </v-col>
       </v-row>
       <v-divider class="my-2"></v-divider>
+      <v-card-title v-if="data.disability">
+        discapacidades
+      </v-card-title>
+      <v-expand-transition>
+      <v-row v-show="data.disability">
+        <v-col cols="3">
+          <v-checkbox
+            v-model="data.disabilityTypes.motor"
+            label="Motora"
+            color="primary"
+            hide-details
+            dense
+          ></v-checkbox>
+        </v-col>
+        <v-col cols="3">
+          <v-checkbox
+            v-model="data.disabilityTypes.visual"
+            label="Visual"
+            color="primary"
+            hide-details
+            dense
+          ></v-checkbox>
+        </v-col>
+        <v-col cols="3">
+          <v-checkbox
+            v-model="data.disabilityTypes.cognitive"
+            label="Cognitiva"
+            color="primary"
+            hide-details
+            dense
+          ></v-checkbox>
+        </v-col>
+        <v-col cols="3">
+          <v-checkbox
+            v-model="data.disabilityTypes.auditive"
+            label="Auditiva"
+            color="primary"
+            hide-details
+            dense
+          ></v-checkbox>
+        </v-col>
+      </v-row>
+      </v-expand-transition>
       <v-row justify="end">
         <!-- <v-col cols="12" md="5" v-if="inDialog">
-          <v-btn block dark color="secondary">Cancelar</v-btn>
+          <v-btn block dark color=" wsecondary">Cancelar</v-btn>
         </v-col> -->
         <v-col cols="12" md="5">
           <v-btn block :disabled="!valid" color="primary" type="submit">
@@ -152,11 +195,17 @@ export default {
         return {
           code: null,
           firstName: "",
+          lastName: "",
           bornDate: "",
           genderCode: "",
           birthCertificate: false,
           disability: false,
-          disabilityTypes: null,
+          disabilityTypes: {
+            motor: false,
+            visual: false,
+            cognitive: false,
+            auditive: false,
+          },
         };
       },
     },
@@ -214,6 +263,7 @@ export default {
     },
   },
   methods: {
+
     submit() {
       if (this.isAggregated) {
         this.$axios
@@ -224,6 +274,28 @@ export default {
               lastName: this.data.lastName,
               bornDate: this.data.bornDate,
               genderCode: this.data.genderCode,
+              birthCertificate: this.data.birthCertificate,
+              disability: this.data.disability,
+              disabilityTypes: this.data.disabilityTypes,
+            },
+          })
+          .then((response) => {
+            this.$emit("close", false);
+            console.log(response.data);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }else{
+         this.$axios
+          .put("api/patient", {
+            params: {
+              code: this.data.code,
+              firstName: this.data.firstName,
+              lastName: this.data.lastName,
+              bornDate: this.data.bornDate,
+              genderCode: this.data.genderCode,
+              birthCertificate: this.data.birthCertificate,
               disability: this.data.disability,
               disabilityTypes: this.data.disabilityTypes,
             },
