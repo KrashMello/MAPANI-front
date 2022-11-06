@@ -135,7 +135,7 @@
         <v-col cols="12" md="4">
           <v-checkbox
             v-model="data.psychiatry"
-            label="Psyquiatra"
+            label="Psiquiatra"
             color="primary"
             hide-details
             dense
@@ -143,8 +143,8 @@
         </v-col>
         <v-col cols="12" md="4">
           <v-checkbox
-            v-model="data.psicology"
-            label="Psicologia"
+            v-model="data.socialPsychology"
+            label="Psicologia social"
             color="primary"
             hide-details
             dense
@@ -152,7 +152,16 @@
         </v-col>
         <v-col cols="12" md="4">
           <v-checkbox
-            v-model="data.def"
+            v-model="data.clinicalPsychology"
+            label="Psicologia clinica"
+            color="primary"
+            hide-details
+            dense
+          ></v-checkbox>
+        </v-col>
+        <v-col cols="12" md="4">
+          <v-checkbox
+            v-model="data.advocacy"
             label="Def"
             color="primary"
             hide-details
@@ -216,10 +225,11 @@ export default {
           pediatrics: false,
           nitritionist: false,
           psychiatry: false,
-          psicology: false,
+          socialPsychology: false,
+          clinicalPsychology:false,
           breastfeedingAdvice: false,
-          def: false,
-          assisten: null,
+          advocacy: false,
+          clinicHistoryCode: null,
         };
       },
     },
@@ -236,11 +246,12 @@ export default {
     },
     allOption(val) {
       this.data.pediatrics = val;
-      this.data.psicology = val;
+      this.data.psicologys   = val;
       this.data.breastfeedingAdvice = val;
       this.data.nutritionist = val;
       this.data.psychiatry = val;
-      this.data.def = val;
+      this.data.advocacy = val;
+      this.data.clinicalPsychology
     },
   },
   data: () => ({
@@ -288,7 +299,10 @@ export default {
               nutritionist: this.data.nutritionist,
               psychiatry: this.data.psychiatry,
               breastfeedingAdvice: this.data.breastfeedingAdvice,
-              def: this.data.def,
+              advocacy: this.data.advocacy,
+              socialPsychology: this.data.socialPsychology,
+              clinicalPsychology: this.data.clinicalPsychology,
+              clinicHistoryCode: this.data.clinicHistoryCode,
               representativeFirstName: this.data.representativeFirstName,
               representativeLastName: this.data.representativeLastName,
               representativeNumberPhone: this.data.representativeNumberPhone,
