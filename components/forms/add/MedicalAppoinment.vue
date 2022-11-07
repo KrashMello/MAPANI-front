@@ -1,7 +1,17 @@
 <template>
   <v-form v-model="valid" ref="form" @submit.prevent="submit">
     <v-container class="mt-3">
-      <v-card-title>Datos del representante</v-card-title>
+      <v-card-title>
+      Buscar historia clinical
+      <v-spacer></v-spacer>
+        <v-btn color="primary" fab small elevation="0">
+            <v-icon>
+              mdi-magnify
+            </v-icon>
+          </v-btn>
+      </v-card-title>
+      <v-divider></v-divider>
+     <v-card-title>Datos del representante</v-card-title>
       <v-row>
         <v-col cols="12" md="6">
           <v-text-field
@@ -31,7 +41,7 @@
             v-model="data.representativeNumberPhone"
             label="Numero de telefono"
             outlined
-            v-mask="'(####) ###-##-##'"
+            v-mask="numberPhoneMask"
             dense
             placeholder="Introduzca el numero de telefono"
             :rules="rules.defaultText"
@@ -162,7 +172,7 @@
         <v-col cols="12" md="4">
           <v-checkbox
             v-model="data.advocacy"
-            label="Def"
+            label="defensoria"
             color="primary"
             hide-details
             dense
@@ -246,12 +256,12 @@ export default {
     },
     allOption(val) {
       this.data.pediatrics = val;
-      this.data.psicologys   = val;
+      this.data.socialPsychology  = val;
       this.data.breastfeedingAdvice = val;
       this.data.nutritionist = val;
       this.data.psychiatry = val;
       this.data.advocacy = val;
-      this.data.clinicalPsychology
+      this.data.clinicalPsychology = val;
     },
   },
   data: () => ({
@@ -267,6 +277,13 @@ export default {
           transform: (v) => v.toLocaleUpperCase(),
         },
       },
+    },
+    numberPhoneMask: {
+      mask: "(####)###-##-##",
+      tokens: {
+        '#': {pattern: /\d/}
+      },
+      masked: true
     },
     menu: false,
     rules: {
@@ -319,6 +336,41 @@ export default {
           .catch((err) => {
             console.log(err);
           });
+      } else {
+          
+          this.data.representativeNumberPhone = this.data.representativeNumberPhone.replace(/[0-9]/gm, '')
+          console.log(this.data.representativeNumberPhone)
+          this.$axios
+          .put("api/appointment", {
+            params: {
+              code: this.data.code,
+              appointmentDate: this.data.appointmentDate,
+              pediatrics: this.data.pediatrics,
+              nutritionist: this.data.nutritionist,
+              psychiatry: this.data.psychiatry,
+              breastfeedingAdvice: this.data.breastfeedingAdvice,
+              advocacy: this.data.advocacy,
+              socialPsychology: this.data.socialPsychology,
+              clinicalPsychology: this.data.clinicalPsychology,
+              clinicHistoryCode: this.data.clinicHistoryCode,
+              representativeFirstName: this.data.representativeFirstName,
+              representativeLastName: this.data.representativeLastName,
+              representativeNumberPhone: this.data.representativeNumberPhone,
+              representativeDirection: this.data.representativeDirection,
+              patientFirstName: this.data.patientFirstName,
+              patientLastName: this.data.patientLastName,
+              patientBornDate: this.data.patientBornDate,
+              status: 0
+            },
+          })
+          .then((response) => {
+            this.$emit("close", false);
+            console.log(response.data);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+
       }
     },
     cancel() {
