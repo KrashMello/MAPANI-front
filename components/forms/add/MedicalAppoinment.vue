@@ -308,6 +308,8 @@ export default {
   },
   methods: {
     submit() {
+      const re=/[()-]/gm
+      const numberPhone = this.data.representativeNumberPhone.replace(re, '')
       if (this.isAggregated) {
         this.$axios
           .post("api/appointment", {
@@ -322,7 +324,7 @@ export default {
               clinicHistoryCode: this.data.clinicHistoryCode,
               representativeFirstName: this.data.representativeFirstName,
               representativeLastName: this.data.representativeLastName,
-              representativeNumberPhone: this.data.representativeNumberPhone,
+              representativeNumberPhone: numberPhone,
               representativeDirection: this.data.representativeDirection,
               patientFirstName: this.data.patientFirstName,
               patientLastName: this.data.patientLastName,
@@ -337,13 +339,11 @@ export default {
             console.log(err);
           });
       } else {
-          
-          this.data.representativeNumberPhone = this.data.representativeNumberPhone.replace(/[0-9]/gm, '')
-          console.log(this.data.representativeNumberPhone)
           this.$axios
           .put("api/appointment", {
             params: {
               code: this.data.code,
+              projectCode: this.data.projectCode,
               appointmentDate: this.data.appointmentDate,
               pediatrics: this.data.pediatrics,
               nutritionist: this.data.nutritionist,
@@ -355,7 +355,7 @@ export default {
               clinicHistoryCode: this.data.clinicHistoryCode,
               representativeFirstName: this.data.representativeFirstName,
               representativeLastName: this.data.representativeLastName,
-              representativeNumberPhone: this.data.representativeNumberPhone,
+              representativeNumberPhone: numberPhone,
               representativeDirection: this.data.representativeDirection,
               patientFirstName: this.data.patientFirstName,
               patientLastName: this.data.patientLastName,
