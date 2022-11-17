@@ -141,5 +141,8 @@ export default {
   methods: {
     ...mapActions(["logout"]),
   },
+  mounted() {
+    
+  },
 };
 </script>

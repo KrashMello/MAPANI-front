@@ -121,19 +121,19 @@
          <v-container class="mt-3">
         <v-row>
           <v-col cols="12">
-            <v-text-field label="Codigo" dense outlined color="primary" placeholder="ingrezar el codigo MAPANI"></v-text-field>
+            <v-text-field v-model="searchOption.code" label="Codigo" dense outlined color="primary" placeholder="ingrezar el codigo MAPANI"></v-text-field>
           </v-col>
           <v-col cols="12">
-            <v-text-field label="Nombre del representate" dense outlined color="primary" placeholder="ingrece el nombre del representante"></v-text-field>
+            <v-text-field v-model="searchOption.representativeFirstName" label="Nombre del representate" dense outlined color="primary" placeholder="ingrece el nombre del representante"></v-text-field>
           </v-col>
           <v-col cols="12">
-            <v-text-field label="Apellido del representante" dense outlined color="primary" placeholder="ingrece el apellido del representante"></v-text-field>
+            <v-text-field v-model="searchOption.representativeLastName" label="Apellido del representante" dense outlined color="primary" placeholder="ingrece el apellido del representante"></v-text-field>
           </v-col>
           <v-col cols="12">
-            <v-text-field label="Nombre del paciente" dense outlined color="primary" placeholder="ingrece el Nombre del paciente"></v-text-field>
+            <v-text-field v-model="searchOption.patientFirstName" label="Nombre del paciente" dense outlined color="primary" placeholder="ingrece el Nombre del paciente"></v-text-field>
           </v-col>
           <v-col cols="12">
-            <v-text-field label="Apellido del paciente" dense outlined color="primary" placeholder="ingrece el apellido del paciente"></v-text-field>
+            <v-text-field v-model="searchOption.patientLastName" label="Apellido del paciente" dense outlined color="primary" placeholder="ingrece el apellido del paciente"></v-text-field>
           </v-col>
           <v-col cols="12">
              <v-menu
@@ -146,6 +146,7 @@
           >
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
+                v-model="searchOption.appointmentDate"
                 label="Fecha de cita"
                 prepend-icon="mdi-calendar"
                 readonly
@@ -155,26 +156,23 @@
               ></v-text-field>
             </template>
             <v-date-picker
-                        :active-picker="activePicker"
-              :max="
+                v-model="searchOption.appointmentDate"
+                :active-picker="activePicker"
+                :max="
                 new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
                   .toISOString()
                   .substr(0, 10)
-              "
-              min="1950-01-01"
-              @change="save"
+                "
+                min="1950-01-01"
+                @change="save"
             ></v-date-picker>
           </v-menu>
-
           </v-col>
-
-
-
         </v-row>
       </v-container>
       <template #append>
       <div class="pa-2">
-        <v-btn class="pa-2" block color="primary" >Filtrar</v-btn>
+        <v-btn class="pa-2" block color="primary" @click="search">Filtrar</v-btn>
       </div>
       </template>
     </v-navigation-drawer>
@@ -194,7 +192,15 @@ export default {
       searchDrawer: false,
       appointment: [],
       menu: false,
-    activePicker: null,
+      searchOption: {
+        code : '',
+        representativeFirstName: '',
+        representativeLastName: '',
+        patientFirstName: '',
+        patientLastName: '',
+        appointmentDate: '',
+      },
+      activePicker: null,
       formData: {
         clinicHistoryCode: null,
         representativeFirstName: "",
@@ -265,22 +271,23 @@ export default {
     unSelectItem() {
       this.selectedItemTable = null;
     },
-save(date) {
+    save(date) {
       this.$refs.menu.save(date);
     },
-
+    search(){
+      this.socket.emit('searchAppointment', this.searchOption)
+    },
   },
   created() {
     this.changePageTitle("Citas");
-    this.$axios
-      .get("api/appointment")
-      .then((response) => {
-        this.appointment = response.data;
-        // console.log(response.data)
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+      },
+  mounted() {
+    this.socket = this.$nuxtSocket({
+      name: 'main',
+    })
+    this.socket.on('getAppointment',async (resp) => {
+       this.appointment = await resp.rows
+    })
   },
 };
 </script>

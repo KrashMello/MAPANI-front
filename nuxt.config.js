@@ -37,7 +37,15 @@ export default {
     "@nuxtjs/axios",
     // https://go.nuxtjs.dev/pwa
     "@nuxtjs/pwa",
+    //nuxt socket io
+    "nuxt-socket-io",
   ],
+
+  io: {
+    sockets: [ // Required
+      { name: 'main', url: 'http://localhost:7000', default: true},
+    ]
+  },
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
