@@ -95,87 +95,11 @@
         ></FormsAddMedicalAppoinment>
       </template>
     </DialogForm>
-
-    <v-navigation-drawer
-      v-model="searchDrawer"
-      right
-      absolute
-      width="50%"
-      temporary
-    >
-      <template #prepend>
-   <v-list-item>
-        <v-list-item-content>
-          <v-list-item-title class="text-h6">
-            Buscar
-          </v-list-item-title>
-        </v-list-item-content>
-        <v-list-item-action>
-          <v-btn icon color="primary" @click="searchDrawer = !searchDrawer">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-        </v-list-item-action>
-      </v-list-item>
-
+      <drawer-search show-drawer="searchDrawer" title="filtrar" @close="closeDrawer">
+        <template #form>
+          <forms-search-appointment :form-data="searchOption"></forms-search-appointment>
       </template>
-         <v-container class="mt-3">
-        <v-row>
-          <v-col cols="12">
-            <v-text-field v-model="searchOption.code" label="Codigo" dense outlined color="primary" placeholder="ingrezar el codigo MAPANI"></v-text-field>
-          </v-col>
-          <v-col cols="12">
-            <v-text-field v-model="searchOption.representativeFirstName" label="Nombre del representate" dense outlined color="primary" placeholder="ingrece el nombre del representante"></v-text-field>
-          </v-col>
-          <v-col cols="12">
-            <v-text-field v-model="searchOption.representativeLastName" label="Apellido del representante" dense outlined color="primary" placeholder="ingrece el apellido del representante"></v-text-field>
-          </v-col>
-          <v-col cols="12">
-            <v-text-field v-model="searchOption.patientFirstName" label="Nombre del paciente" dense outlined color="primary" placeholder="ingrece el Nombre del paciente"></v-text-field>
-          </v-col>
-          <v-col cols="12">
-            <v-text-field v-model="searchOption.patientLastName" label="Apellido del paciente" dense outlined color="primary" placeholder="ingrece el apellido del paciente"></v-text-field>
-          </v-col>
-          <v-col cols="12">
-             <v-menu
-            ref="menu"
-            v-model="menu"
-            :close-on-content-click="false"
-            transition="scale-transition"
-            offset-y
-            min-width="auto"
-          >
-            <template v-slot:activator="{ on, attrs }">
-              <v-text-field
-                v-model="searchOption.appointmentDate"
-                label="Fecha de cita"
-                prepend-icon="mdi-calendar"
-                readonly
-                dense
-                v-bind="attrs"
-                v-on="on"
-              ></v-text-field>
-            </template>
-            <v-date-picker
-                v-model="searchOption.appointmentDate"
-                :active-picker="activePicker"
-                :max="
-                new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-                  .toISOString()
-                  .substr(0, 10)
-                "
-                min="1950-01-01"
-                @change="save"
-            ></v-date-picker>
-          </v-menu>
-          </v-col>
-        </v-row>
-      </v-container>
-      <template #append>
-      <div class="pa-2">
-        <v-btn class="pa-2" block color="primary" @click="search">Filtrar</v-btn>
-      </div>
-      </template>
-    </v-navigation-drawer>
+    </drawer-search>
   </div>
 </template>
 <script>
@@ -191,16 +115,15 @@ export default {
       selectedItemTable: null,
       searchDrawer: false,
       appointment: [],
-      menu: false,
-      searchOption: {
-        code : '',
+      activePicker: null,
+      searchOption:{
+        code:'',
         representativeFirstName: '',
         representativeLastName: '',
         patientFirstName: '',
         patientLastName: '',
         appointmentDate: '',
       },
-      activePicker: null,
       formData: {
         clinicHistoryCode: null,
         representativeFirstName: "",
@@ -271,12 +194,12 @@ export default {
     unSelectItem() {
       this.selectedItemTable = null;
     },
-    save(date) {
-      this.$refs.menu.save(date);
-    },
     search(){
       this.socket.emit('searchAppointment', this.searchOption)
     },
+    closeDrawer(data){
+      this.searchDrawer = data
+    }
   },
   created() {
     this.changePageTitle("Citas");
