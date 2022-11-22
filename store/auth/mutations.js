@@ -1,8 +1,8 @@
 export default {
-  updateAuth(state, [user = null, personData = null, isAuth]) {
-    state.auth.isAuth = isAuth;
+  updateAuth(state, [user = null, personData = null, token]) {
+    state.token = token;
 
-    if (isAuth) {
+    if (token) {
       state.auth.departament = user.departament;
       state.auth.personData = personData;
       state.auth.carge = user.carge;
@@ -18,4 +18,7 @@ export default {
       }, 1000);
     }
   },
+  setToken: (state,token) =>{
+    state.token = token
+  }
 };

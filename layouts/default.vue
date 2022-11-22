@@ -113,7 +113,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters, mapActions, mapMutations } from "vuex";
 export default {
   name: "DefaultLayout",
   data() {
@@ -140,9 +140,10 @@ export default {
   },
   methods: {
     ...mapActions(["logout"]),
+    ...mapMutations(["setSocket"]),
   },
   mounted() {
-    
+    this.setSocket(this.$nuxtSocket({ name: "main" }));
   },
 };
 </script>

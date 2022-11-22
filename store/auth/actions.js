@@ -1,40 +1,25 @@
 export default {
-  login({ commit, getters }, [username, password]) {
-    let findUser = undefined;
-    let findPass = undefined;
-    let personData = undefined;
-
-    findUser = getters.findUser(username);
-    findPass = getters.findPass(password);
-
-    if (findUser === undefined || findPass === undefined) {
+  async login({ commit }, [username, password]) {
       commit("changeLoadingState", true);
-      setTimeout(() => {
-        commit("changeStatus", {
-          code: 1,
-          message: "Nombre de usuario o clave incorrecta",
-        });
-        commit("changeLoadingState", false);
-      }, 1000);
-    } else {
-      commit("changeLoadingState", true);
-      setTimeout(() => {
-        personData = getters.findPerson(findUser.personCode);
-        commit("updateAuth", [findUser, personData, true]);
+
+     await this.$axios.post('api/Auth/singIn',{params:{username:username,password:password}}).then(resp=>{
+        localStorage.setItem('token', resp)
+        commit("updateAuth",[user,userdata,resp.token])
         commit("changeLoadingState", false);
         commit("changeStatus", { code: 0, message: "" });
-      }, 1000);
-    }
+    }).catch(err =>{
+        commit("changeStatus", err.data)
+      });
 
-    /**
-     *
-     * axios.post("http://api.alcaldia.com.ve/agregar/users",{username: username, password: password}).
-     * then((response) => {
-     * commit("updateAuth",response.data)
-     * }).catch((error) => {commit("messageError",error.data)});  w
-     */
   },
   logout({ commit }) {
-    commit("updateAuth", [null, null, false]);
+    commit("updateAuth", [null, null, null]);
+    localStorage.setItem('token',null)
   },
+  getToken({ commit }) {
+      if (localStorage.getItem('token')) 
+        commit('setToken',  localStorage.getItem('token'))
+      else 
+        commit('setToken', null)
+    }
 };

@@ -2,7 +2,7 @@
   <v-card class="fill-height">
     <v-card-title> Tabla de personas </v-card-title>
     <v-divider></v-divider>
-    <TablesPersonTable :Persons="Persons" @data-find="dataFind" /> 
+    <TablesPersonTable :Persons="Persons" @data-find="dataFind" />
   </v-card>
 </template>
 
@@ -22,17 +22,14 @@ export default {
     ...mapGetters(["findByDNI"]),
 
     Persons() {
-      return this.findByDNI(
-        this.findPerson.documentType,
-        this.findPerson.DNI,
-      );
+      return this.findByDNI(this.findPerson.documentType, this.findPerson.DNI);
     },
   },
   methods: {
     ...mapMutations(["changePageTitle"]),
-    dataFind(data){
-      this.findPerson = data
-    }
+    dataFind(data) {
+      this.findPerson = data;
+    },
   },
   created() {
     this.changePageTitle("Personas");

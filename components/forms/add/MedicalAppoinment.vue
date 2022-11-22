@@ -2,16 +2,14 @@
   <v-form v-model="valid" ref="form" @submit.prevent="submit">
     <v-container class="mt-3">
       <v-card-title>
-      Buscar historia clinical
-      <v-spacer></v-spacer>
+        Buscar historia clinical
+        <v-spacer></v-spacer>
         <v-btn color="primary" fab small elevation="0">
-            <v-icon>
-              mdi-magnify
-            </v-icon>
-          </v-btn>
+          <v-icon> mdi-magnify </v-icon>
+        </v-btn>
       </v-card-title>
       <v-divider></v-divider>
-     <v-card-title>Datos del representante</v-card-title>
+      <v-card-title>Datos del representante</v-card-title>
       <v-row>
         <v-col cols="12" md="6">
           <v-text-field
@@ -204,7 +202,7 @@
         </v-col> -->
         <v-col cols="12" md="5">
           <v-btn block :disabled="!valid" color="primary" type="submit">
-            {{ formData.code ? "Editar" : "Guardar" }}
+            {{ data.code ? "Editar" : "Guardar" }}
           </v-btn>
         </v-col>
       </v-row>
@@ -213,6 +211,8 @@
 </template>
 
 <script>
+import { mapGetters, mapMutations } from "vuex";
+
 export default {
   name: "formAddMedicalAppointment",
   props: {
@@ -221,28 +221,6 @@ export default {
       default: false,
     },
     isAggregated: { type: Boolean, default: false },
-    formData: {
-      type: Object,
-      default() {
-        return {
-          representativeFirstName: "",
-          representativeLastName: "",
-          representativeNumberPhone: "",
-          representativeDirection: "",
-          patientFirstName: "",
-          patientLastName: "",
-          patientBornDate: "",
-          pediatrics: false,
-          nitritionist: false,
-          psychiatry: false,
-          socialPsychology: false,
-          clinicalPsychology:false,
-          breastfeedingAdvice: false,
-          advocacy: false,
-          clinicHistoryCode: null,
-        };
-      },
-    },
   },
   watch: {
     dialogIsEnable(newVal) {
@@ -256,7 +234,7 @@ export default {
     },
     allOption(val) {
       this.data.pediatrics = val;
-      this.data.socialPsychology  = val;
+      this.data.socialPsychology = val;
       this.data.breastfeedingAdvice = val;
       this.data.nutritionist = val;
       this.data.psychiatry = val;
@@ -281,9 +259,9 @@ export default {
     numberPhoneMask: {
       mask: "(####)###-##-##",
       tokens: {
-        '#': {pattern: /\d/}
+        "#": { pattern: /\d/ },
       },
-      masked: true
+      masked: true,
     },
     menu: false,
     rules: {
@@ -302,14 +280,16 @@ export default {
     },
   }),
   computed: {
+    ...mapGetters({ appointment: "getAppointment" }),
     data() {
-      return this.formData;
+      return this.appointment;
     },
   },
   methods: {
+    ...mapMutations(["setAppointment"]),
     submit() {
-      const re=/[()-]/gm
-      const numberPhone = this.data.representativeNumberPhone.replace(re, '')
+      const re = /[()-]/gm;
+      const numberPhone = this.data.representativeNumberPhone.replace(re, "");
       if (this.isAggregated) {
         this.$axios
           .post("api/appointment", {
@@ -331,15 +311,14 @@ export default {
               patientBornDate: this.data.patientBornDate,
             },
           })
-          .then((response) => {
+          .then(() => {
             this.$emit("close", false);
-            console.log(response.data);
           })
           .catch((err) => {
             console.log(err);
           });
       } else {
-          this.$axios
+        this.$axios
           .put("api/appointment", {
             params: {
               code: this.data.code,
@@ -360,17 +339,32 @@ export default {
               patientFirstName: this.data.patientFirstName,
               patientLastName: this.data.patientLastName,
               patientBornDate: this.data.patientBornDate,
-              status: 0
+              status: 0,
             },
           })
-          .then((response) => {
+          .then(() => {
             this.$emit("close", false);
-            console.log(response.data);
+            this.setAppointment({
+              representativeFirstName: "",
+              representativeLastName: "",
+              representativeNumberPhone: "",
+              representativeDirection: "",
+              patientFirstName: "",
+              patientLastName: "",
+              patientBornDate: "",
+              pediatrics: false,
+              nitritionist: false,
+              psychiatry: false,
+              socialPsychology: false,
+              clinicalPsychology: false,
+              breastfeedingAdvice: false,
+              advocacy: false,
+              clinicHistoryCode: null,
+            });
           })
           .catch((err) => {
             console.log(err);
           });
-
       }
     },
     cancel() {

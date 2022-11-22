@@ -3,15 +3,7 @@ import getters from "./getters";
 import mutations from "./mutations";
 
 const defaultState = {
-  token: null,
-  auth: {
-    departament: "",
-    firstName: "",
-    lastName: "",
-    fullName: "",
-    permission: [],
-    carge: "",
-  },
+  masterSocket: null,
 };
 
 const inBrowser = typeof window !== "undefined";

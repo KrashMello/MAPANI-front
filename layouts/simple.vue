@@ -11,10 +11,7 @@ export default {
   data() {
     return {};
   },
-  methods: {
-   
-  },
-  mounted() {
-      },
+  methods: {},
+  mounted() {},
 };
 </script>

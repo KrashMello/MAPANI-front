@@ -103,7 +103,11 @@ export default {
         this.$refs.form.validate();
         this.status.code = 1;
         this.status.message = "Los campos no pueden estar vacios";
-      } else this.login([this.data.username, this.data.password]);
+      } else 
+        this.$axios.post("api/Auth/singIn",{params:{username: this.data.username,password: this.data.password}}).then(res=>{
+          console.log(res)
+      })
+      // this.login([this.data.username, this.data.password]);
     },
   },
 };

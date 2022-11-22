@@ -123,48 +123,46 @@
         </v-col>
       </v-row>
       <v-divider class="my-2"></v-divider>
-      <v-card-title v-if="data.disability">
-        discapacidades
-      </v-card-title>
+      <v-card-title v-if="data.disability"> discapacidades </v-card-title>
       <v-expand-transition>
-      <v-row v-show="data.disability">
-        <v-col cols="3">
-          <v-checkbox
-            v-model="data.disabilityTypes.motor"
-            label="Motora"
-            color="primary"
-            hide-details
-            dense
-          ></v-checkbox>
-        </v-col>
-        <v-col cols="3">
-          <v-checkbox
-            v-model="data.disabilityTypes.visual"
-            label="Visual"
-            color="primary"
-            hide-details
-            dense
-          ></v-checkbox>
-        </v-col>
-        <v-col cols="3">
-          <v-checkbox
-            v-model="data.disabilityTypes.cognitive"
-            label="Cognitiva"
-            color="primary"
-            hide-details
-            dense
-          ></v-checkbox>
-        </v-col>
-        <v-col cols="3">
-          <v-checkbox
-            v-model="data.disabilityTypes.auditive"
-            label="Auditiva"
-            color="primary"
-            hide-details
-            dense
-          ></v-checkbox>
-        </v-col>
-      </v-row>
+        <v-row v-show="data.disability">
+          <v-col cols="3">
+            <v-checkbox
+              v-model="data.disabilityTypes.motor"
+              label="Motora"
+              color="primary"
+              hide-details
+              dense
+            ></v-checkbox>
+          </v-col>
+          <v-col cols="3">
+            <v-checkbox
+              v-model="data.disabilityTypes.visual"
+              label="Visual"
+              color="primary"
+              hide-details
+              dense
+            ></v-checkbox>
+          </v-col>
+          <v-col cols="3">
+            <v-checkbox
+              v-model="data.disabilityTypes.cognitive"
+              label="Cognitiva"
+              color="primary"
+              hide-details
+              dense
+            ></v-checkbox>
+          </v-col>
+          <v-col cols="3">
+            <v-checkbox
+              v-model="data.disabilityTypes.auditive"
+              label="Auditiva"
+              color="primary"
+              hide-details
+              dense
+            ></v-checkbox>
+          </v-col>
+        </v-row>
       </v-expand-transition>
       <v-row justify="end">
         <!-- <v-col cols="12" md="5" v-if="inDialog">
@@ -263,7 +261,6 @@ export default {
     },
   },
   methods: {
-
     submit() {
       if (this.isAggregated) {
         this.$axios
@@ -286,8 +283,8 @@ export default {
           .catch((err) => {
             console.log(err);
           });
-      }else{
-         this.$axios
+      } else {
+        this.$axios
           .put("api/patient", {
             params: {
               code: this.data.code,
@@ -317,7 +314,7 @@ export default {
     },
   },
   created() {
-      this.$axios
+    this.$axios
       .get("api/gender")
       .then((response) => {
         this.genders = response.data;

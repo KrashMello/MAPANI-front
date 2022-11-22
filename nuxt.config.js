@@ -42,9 +42,10 @@ export default {
   ],
 
   io: {
-    sockets: [ // Required
-      { name: 'main', url: 'http://localhost:7000', default: true},
-    ]
+    sockets: [
+      // Required
+      { name: "main", url: "http://localhost:7000", default: true },
+    ],
   },
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios

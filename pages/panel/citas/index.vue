@@ -18,7 +18,13 @@
           </v-btn>
         </v-col>
         <v-col cols="12" md="2">
-          <v-btn color="primary" rounded block dark @click="searchDrawer = !searchDrawer">
+          <v-btn
+            color="primary"
+            rounded
+            block
+            dark
+            @click="showDrawer = !showDrawer"
+          >
             Buscar
             <v-icon dark right>mdi-magnify</v-icon>
           </v-btn>
@@ -43,7 +49,7 @@
                   </thead>
                   <tbody>
                     <tr
-                      v-for="item in appointment"
+                      v-for="item in appointments"
                       :key="item.code"
                       @mouseover="selectItem(item.code)"
                       @mouseleave="unSelectItem()"
@@ -77,11 +83,12 @@
         </v-col>
       </v-row>
     </v-container>
+      <!-- dialog form -->
     <DialogForm
       :title="
         dialog.formAdd === true
           ? 'Agendar Nueva Cita'
-          : 'Modificar Cita ' + formData.code
+          : 'Modificar Cita ' + appointment.code
       "
       :dialog="dialog.show"
       @close="closeDialog"
@@ -90,14 +97,18 @@
         <FormsAddMedicalAppoinment
           :dialog-is-enable="dialog.show"
           :is-aggregated="dialog.formAdd"
-          :form-data="formData"
           @close="closeDialog"
         ></FormsAddMedicalAppoinment>
       </template>
     </DialogForm>
-      <drawer-search show-drawer="searchDrawer" title="filtrar" @close="closeDrawer">
-        <template #form>
-          <forms-search-appointment :form-data="searchOption"></forms-search-appointment>
+    <!-- drawer for search  -->
+    <drawer-search
+      :show-drawer="showDrawer"
+      title="filtrar"
+      @close="closeDrawerSearch"
+    >
+      <template #form>
+        <forms-search-appointment></forms-search-appointment>
       </template>
     </drawer-search>
   </div>
@@ -113,35 +124,8 @@ export default {
         formAdd: true,
       },
       selectedItemTable: null,
-      searchDrawer: false,
-      appointment: [],
+      showDrawer: false,
       activePicker: null,
-      searchOption:{
-        code:'',
-        representativeFirstName: '',
-        representativeLastName: '',
-        patientFirstName: '',
-        patientLastName: '',
-        appointmentDate: '',
-      },
-      formData: {
-        clinicHistoryCode: null,
-        representativeFirstName: "",
-        representativeLastName: "",
-        representativeNumberPhone: "",
-        representativeDirection: "",
-        patientFirstName: "",
-        patientLastName: "",
-        patientBornDate: "",
-        pediatrics: false,
-        nitritionist: false,
-        psychiatry: false,
-        socialPsychology: false,
-        clinicalPsychology: false,
-        breastfeedingAdvice: false,
-        advocacy: false,
-        
-      },
       headers: [
         { text: "Nacionalidad", value: "documentType", sortable: false },
         { text: "Cedula", value: "DNI" },
@@ -156,16 +140,24 @@ export default {
     menu(val) {
       val && setTimeout(() => (this.activePicker = "YEAR"));
     },
-
   },
   computed: {
-    ...mapGetters({ Persons: "persons" }),
+    ...mapGetters({
+      socket: "socket",
+      appointments: "getAppointments",
+      appointment: "getAppointment",
+    }),
   },
   methods: {
-    ...mapMutations(["changePageTitle"]),
+    ...mapMutations([
+      "changePageTitle",
+      "setSocket",
+      "setAppointments",
+      "setAppointment",
+    ]),
     closeDialog(data) {
       this.dialog.show = data;
-      this.formData = {
+      this.setAppointment({
         clinicHistoryCode: null,
         representativeFirstName: "",
         representativeLastName: "",
@@ -181,10 +173,13 @@ export default {
         breastfeedingAdvice: false,
         advocacy: false,
         clinicalPsychology: false,
-      };
+      });
+    },
+    closeDrawerSearch(data) {
+      this.showDrawer = data;
     },
     modifyAppointment(appointment) {
-      this.formData = appointment;
+      this.setAppointment(appointment);
       this.dialog.show = !this.dialog.show;
       this.dialog.formAdd = false;
     },
@@ -194,23 +189,14 @@ export default {
     unSelectItem() {
       this.selectedItemTable = null;
     },
-    search(){
-      this.socket.emit('searchAppointment', this.searchOption)
-    },
-    closeDrawer(data){
-      this.searchDrawer = data
-    }
   },
   created() {
     this.changePageTitle("Citas");
-      },
+  },
   mounted() {
-    this.socket = this.$nuxtSocket({
-      name: 'main',
-    })
-    this.socket.on('getAppointment',async (resp) => {
-       this.appointment = await resp.rows
-    })
+    this.socket.on("getAppointments", async (resp) => {
+      this.setAppointments(await resp.rows);
+    });
   },
 };
 </script>

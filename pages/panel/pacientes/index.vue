@@ -116,11 +116,11 @@ export default {
         birthCertificate: false,
         disability: false,
         disabilityTypes: {
-            motor: false,
-            visual: false,
-            cognitive: false,
-            auditive: false,
-          },
+          motor: false,
+          visual: false,
+          cognitive: false,
+          auditive: false,
+        },
       },
     };
   },
@@ -140,11 +140,11 @@ export default {
         birthCertificate: false,
         disability: false,
         disabilityTypes: {
-            motor: false,
-            visual: false,
-            cognitive: false,
-            auditive: false,
-          },
+          motor: false,
+          visual: false,
+          cognitive: false,
+          auditive: false,
+        },
       };
     },
     modifyPatient(patient) {
@@ -163,7 +163,7 @@ export default {
     this.changePageTitle("Pacientes");
     this.$axios
       .get("api/patient")
-    .then((response) => {
+      .then((response) => {
         this.patients = response.data;
 
         // console.log(response.data)

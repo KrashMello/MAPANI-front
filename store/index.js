@@ -6,6 +6,7 @@ import stadeMachine from "./stadeMachine";
 import users from "./users";
 import person from "./person";
 import appoinment from "./appoinment";
+import socket from "./socket";
 
 const createStore = () => {
   return new Vuex.Store({
@@ -18,6 +19,7 @@ const createStore = () => {
       users: users,
       person: person,
       appoinment: appoinment,
+      socket: socket,
     },
   });
 };
