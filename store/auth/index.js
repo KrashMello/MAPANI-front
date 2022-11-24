@@ -5,13 +5,9 @@ import mutations from "./mutations";
 const defaultState = {
   token: null,
   auth: {
-    departament: "",
-    firstName: "",
-    lastName: "",
-    fullName: "",
+    userData: {}, 
     permission: [],
-    carge: "",
-  },
+    },
 };
 
 const inBrowser = typeof window !== "undefined";

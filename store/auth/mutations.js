@@ -1,12 +1,12 @@
 export default {
-  updateAuth(state, [user = null, personData = null, token]) {
-    state.token = token;
-
+  updateAuth(state, [token, getters]) {
+    let data;
+    getters.socket.emit("verifyToken",token)
+    getters.socket.on("verifyToken",resp=>{data = resp})
+    localStorage.setItem('token', token)
     if (token) {
-      state.auth.departament = user.departament;
-      state.auth.personData = personData;
-      state.auth.carge = user.carge;
-      state.auth.permission = user.permission;
+      state.auth.userData = data.userData;
+      state.auth.permission = data.permissions;
       this.$router.push({ name: "panel" });
     } else {
       this.$router.go("/");

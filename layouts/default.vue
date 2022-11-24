@@ -143,7 +143,7 @@ export default {
     ...mapMutations(["setSocket"]),
   },
   mounted() {
-    this.setSocket(this.$nuxtSocket({ name: "main" }));
+    // this.setSocket(this.$nuxtSocket({ name: "main" }));
   },
 };
 </script>
