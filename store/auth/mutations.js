@@ -1,20 +1,18 @@
 export default {
-  updateAuth(state, [token, getters]) {
-    let data;
+  async updateAuth(state, [token, getters]) {
     getters.socket.emit("verifyToken",token)
-    getters.socket.on("verifyToken",resp=>{data = resp})
     localStorage.setItem('token', token)
-    if (token) {
-      state.auth.userData = data.userData;
-      state.auth.permission = data.permissions;
-      this.$router.push({ name: "panel" });
+    if (token) { 
+    await getters.socket.on("verifyToken",resp => {
+        state.auth.userData = resp.userData;
+        state.auth.permissions = resp.permissions;
+        this.$router.push({ name: "panel" });
+      })
     } else {
       this.$router.go("/");
       setTimeout(() => {
-        state.auth.departament = "";
-        state.auth.personData = "";
-        state.auth.carge = "";
-        state.auth.permission = "";
+        state.auth.userData = "";
+        state.auth.permissions = "";
       }, 1000);
     }
   },

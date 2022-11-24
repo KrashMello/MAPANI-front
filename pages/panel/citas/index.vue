@@ -108,7 +108,7 @@
       @close="closeDrawerSearch"
     >
       <template #form>
-        <forms-search-appointment></forms-search-appointment>
+        <!-- <forms-search-appointment></forms-search-appointment> -->
       </template>
     </drawer-search>
   </div>

@@ -6,7 +6,7 @@ const defaultState = {
   token: null,
   auth: {
     userData: {}, 
-    permission: [],
+    permissions: [],
     },
 };
 

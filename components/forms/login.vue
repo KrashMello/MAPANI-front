@@ -103,8 +103,9 @@ export default {
         this.$refs.form.validate();
         this.status.code = 1;
         this.status.message = "Los campos no pueden estar vacios";
-      } else 
-       this.login([this.data.username, this.data.password]);
+      } else {
+         this.login([this.data.username, this.data.password]);
+      }
     },
   },
 };

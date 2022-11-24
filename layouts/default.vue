@@ -28,10 +28,10 @@
 
               <v-list-item-content>
                 <v-list-item-title>
-                  {{ userData.personData.fullName }}
+                  {{ `${auth.userData.firstName.split(" ")[0]} ${auth.userData.lastName.split(" ")[0]}` }}
                 </v-list-item-title>
                 <v-list-item-subtitle>
-                  {{ userData.departament }} | {{ userData.carge }}
+                  {{ `${auth.userData.departamentName ? auth.userData.departamentName : 'Membresia'} | ${auth.userData.cargeName ? auth.userData.cargeName : auth.userData.roleName}` }}
                 </v-list-item-subtitle>
               </v-list-item-content>
 
@@ -78,12 +78,12 @@
       <!-- list item -->
       <v-list shaped dense>
         <v-list-item-group color="accent">
-          <v-list-item v-for="(item, i) in modules" :key="i" :to="item.to">
+          <v-list-item v-for="(item, i) in auth.permissions" :key="i" :to="item.moduleSrc">
             <v-list-item-icon>
-              <v-icon>{{ item.icon }}</v-icon>
+              <v-icon>{{ item.moduleIcon }}</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
-              <v-list-item-title>{{ item.title }}</v-list-item-title>
+              <v-list-item-title>{{ item.moduleName }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list-item-group>
@@ -131,12 +131,9 @@ export default {
   computed: {
     ...mapGetters({
       routeTitle: "getPageTitle",
-      userData: "getAuth",
+      auth: "getAuth",
       getModules: "getModules",
     }),
-    modules() {
-      return this.getModules(this.userData.permission);
-    },
   },
   methods: {
     ...mapActions(["logout"]),
