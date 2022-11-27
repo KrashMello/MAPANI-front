@@ -6,7 +6,7 @@
   </v-app>
 </template>
 <script>
-import { mapMutations, mapActions } from "vuex"
+import { mapMutations, mapGetters } from "vuex"
 export default {
   name: "SimpleLayouts",
   data() {
@@ -14,13 +14,13 @@ export default {
   },
   methods: {
     ...mapMutations(["setSocket"]),
-    ...mapActions(["searchLocalStorageToken"])
   },
   computed: {
+    ...mapGetters(["socket"])
   },
   mounted() {
-    this.setSocket(this.$nuxtSocket({name:'main'}))
-    this.searchLocalStorageToken()
+    if(!this.socket)
+      this.setSocket(this.$nuxtSocket({name:'main'}))
   },
 };
 </script>

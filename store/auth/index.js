@@ -5,8 +5,8 @@ import mutations from "./mutations";
 const defaultState = {
   token: null,
   auth: {
-    userData: {}, 
-    permissions: [],
+    userData: null, 
+    permissions: null,
     },
 };
 

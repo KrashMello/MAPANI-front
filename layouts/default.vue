@@ -28,9 +28,9 @@
 
               <v-list-item-content>
                 <v-list-item-title>
-                  {{ `${auth.userData.firstName.split(" ")[0]} ${auth.userData.lastName.split(" ")[0]}` }}
+                  {{ `${auth.userData ? auth.userData.firstName.split(" ")[0] : 'primer nombre'} ${ auth. userData ? auth.userData.lastName.split(" ")[0] : 'primer apellido'}` }}
                 </v-list-item-title>
-                <v-list-item-subtitle>
+                <v-list-item-subtitle v-if="auth.userData">
                   {{ `${auth.userData.departamentName ? auth.userData.departamentName : 'Membresia'} | ${auth.userData.cargeName ? auth.userData.cargeName : auth.userData.roleName}` }}
                 </v-list-item-subtitle>
               </v-list-item-content>
@@ -76,19 +76,47 @@
       dark
     >
       <!-- list item -->
-      <v-list shaped dense>
-        <v-list-item-group color="accent">
-          <v-list-item v-for="(item, i) in auth.permissions" :key="i" :to="item.moduleSrc">
+      <v-list-item-group v-model="selectedModule" color="accent">
+        <template v-for="(menu,i) in father">
+          <v-list-item v-if="!menu.hasChildren"
+            :key="i"
+            nuxt
+            :to="menu.moduleSrc"
+            exact>
             <v-list-item-icon>
-              <v-icon>{{ item.moduleIcon }}</v-icon>
+              <v-icon>
+                {{menu.moduleIcon}}
+              </v-icon>
+                <v-list-item-title>
+                {{menu.moduleName}}
+                </v-list-item-title>
             </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title>{{ item.moduleName }}</v-list-item-title>
-            </v-list-item-content>
           </v-list-item>
-        </v-list-item-group>
-      </v-list>
+          <v-list-group v-else :key="i" :prepend-icon="menu.moduleIcon">
+              <template #activator>
+                <v-list-item-content>
+                  <v-list-item-title >{{menu.moduleName}}</v-list-item-title>
+                </v-list-item-content>
+              </template>
+              <v-list-item
+                v-for="(children, j) in children.filter(v => v.fatherCode === menu.moduleCode)"
+                :key="j"
+                nuxt
+                :to="children.moduleSrc"
+                router
+                exact
+              >
+                <v-list-item-title>{{children.moduleName}}</v-list-item-title>
 
+                <v-list-item-icon>
+                  <v-icon>{{ children.moduleIcon }} </v-icon>
+                </v-list-item-icon>
+              </v-list-item>
+            </v-list-group>
+
+        </template>
+      </v-list-item-group>
+      
       <!-- logout -->
       <template #append>
         <div class="pa-2">
@@ -133,14 +161,33 @@ export default {
       routeTitle: "getPageTitle",
       auth: "getAuth",
       getModules: "getModules",
+      socket: "socket"
     }),
+    father(){
+      if(this.auth.permissions)
+        return this.auth.permissions.filter(v => v.fatherCode === null);
+      else
+        return []
+    },
+    children(){
+      if(this.auth.permissions)
+        return this.auth.permissions.filter(v => v.fatherCode !== null);
+      else
+        return []
+    }
   },
   methods: {
-    ...mapActions(["logout"]),
-    ...mapMutations(["setSocket"]),
+    ...mapMutations(["setUserDataPermissions","setSocket"]),
+    ...mapActions(["logout","searchLocalStorageToken"]),
   },
   mounted() {
-    // this.setSocket(this.$nuxtSocket({ name: "main" }));
+    if(!this.socket)
+      this.setSocket(this.$nuxtSocket({name:'main'}))
+    this.searchLocalStorageToken();
+    this.socket.on("getUserData",resp => {
+      this.setUserDataPermissions(resp)  
+    });
+
   },
 };
 </script>
