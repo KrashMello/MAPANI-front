@@ -1,28 +1,193 @@
 <template>
-  <v-row>
-    <v-col class="text-center">
-      <img src="/logo-light.png" alt="Vuetify.js" class="mb-5" />
-      <blockquote class="blockquote">
-        &#8220;First, solve the problem. Then, write the code.&#8221;
-        <footer>
-          <small>
-            <em>&mdash;Empleados</em>
-          </small>
-        </footer>
-      </blockquote>
-    </v-col>
-  </v-row>
+  <div>
+    <v-container class="fill-height">
+      <v-row class="mb-2" justify="space-between">
+        <v-col cols="12" md="2">
+          <v-btn
+            color="primary"
+            dark
+            block
+            rounded
+            @click="
+              dialog.show = !dialog.show;
+              dialog.formAdd = true;
+            "
+          >
+             Agregar empleado
+            <v-icon dark right>mdi-plus</v-icon>
+          </v-btn>
+        </v-col>
+        <v-col cols="12" md="2">
+          <v-btn
+            color="primary"
+            rounded
+            block
+            dark
+            @click="showDrawer = !showDrawer"
+          >
+            Buscar
+            <v-icon dark right>mdi-magnify</v-icon>
+          </v-btn>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="12">
+          <v-card rounded="xl">
+            <v-card-text>
+              <v-simple-table dense>
+                <template #default>
+                  <thead>
+                    <tr>
+                      <th class="text-left">Codigo</th>
+                      <th class="text-left">
+                        Nombre y apellido
+                      </th>
+                      <th class="text-left">Departamento</th>
+                      <th class="text-left">Cargo</th>
+                      <th class="text-left">acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      v-for="item in employeds"
+                      :key="item.employedCode"
+                      @mouseover="selectItem(item.employedCode)"
+                      @mouseleave="unSelectItem()"
+                    >
+                      <td>{{ item.employedCode }}</td>
+                      <td>
+                        {{ `${item.personalDataFirstName.split(" ")[0]} ${item.personalDataLastName.split(" ")[0]}`}}
+                      </td>
+                      <td>
+                        {{ item.departamentName }}
+                      </td>
+                      <td>{{ item.jobPositionName }}</td>
+                      <td>
+                        <v-btn
+                          v-if="selectedItemTable === item.employedCode"
+                          icon
+                          small
+                          color="warning"
+                          @click="modifyEmpolyed(item)"
+                        >
+                          <v-icon>mdi-pencil</v-icon>
+                        </v-btn>
+                      </td>
+                    </tr>
+                  </tbody>
+                </template>
+              </v-simple-table>
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
+      <!-- dialog form -->
+    <DialogForm
+      :title="
+        dialog.formAdd === true
+          ? `Agregar Nuevo Empleado`
+          : `Modificar Empleado ${employed.employed}`
+      "
+      :dialog="dialog.show"
+      @close="closeDialog"
+    >
+      <template #form>
+        <!-- <FormsAddMedicalAppoinment -->
+        <!--   :dialog-is-enable="dialog.show" -->
+        <!--   :is-aggregated="dialog.formAdd" -->
+        <!--   @close="closeDialog" -->
+        <!-- ></FormsAddMedicalAppoinment> -->
+      </template>
+    </DialogForm>
+    <!-- drawer for search  -->
+    <drawer-search
+      :show-drawer="showDrawer"
+      title="filtrar"
+      @close="closeDrawerSearch"
+    >
+      <template #form>
+        <!-- <forms-search-appointment></forms-search-appointment> -->
+      </template>
+    </drawer-search>
+  </div>
+
 </template>
 
 <script>
-import { mapMutations } from "vuex";
+import { mapMutations, mapGetters } from "vuex";
 export default {
   name: "EmpleadosPanel",
-  methods: {
-    ...mapMutations(["changePageTitle"]),
+  data: () => {
+    return {
+      dialog: {
+        show: false,
+        formAdd: true,
+      },
+      selectedItemTable: null,
+      showDrawer: false,
+      activePicker: null,
+    }
+  },
+  computed: {
+    ...mapGetters({
+      socket: "socket",
+      employeds: "getEmployeds",
+      employed: "getEmployed",
+    }),
+  },
+
+  methods: { 
+    ...mapMutations(["changePageTitle" ,"setEmployed"]),
+    closeDialog(data) {
+      this.dialog.show = data;
+      this.setEmployed({
+        employedCode: "",
+        personalDataCode: "",
+        jobPositionCode: "",
+        jobPositionName: "",
+        departamentCode: "",
+        departamentName: "",
+        dateOfEntry: "",
+        dateOfDischarge: "",
+        firstName: "",
+        lastName: "",
+        genderCode: "",
+        documentTypeCode: "",
+        dni: "",
+        bornDate: "",
+        martialStausCode: "",
+        disability: false,
+        disabilityTypeCode: "",
+        ethnicGroup: false,
+        ethnicDescription: "",
+        parrishCode: "",
+        direction: "",
+        phoneNumber: "",
+      });
+    },
+    closeDrawerSearch(data) {
+      this.showDrawer = data;
+    },
+    modifyEmployed(employed) {
+      this.setEmployed(employed);
+      this.dialog.show = !this.dialog.show;
+      this.dialog.formAdd = false;
+    },
+    selectItem(i) {
+      this.selectedItemTable = i;
+    },
+    unSelectItem() {
+      this.selectedItemTable = null;
+    },
   },
   created() {
     this.changePageTitle("Empleados");
+  },
+  mounted() {
+    this.socket.on("getEmployeds", async (resp) => {
+      this.setEmployed(await resp.rows);
+    })
   },
 };
 </script>

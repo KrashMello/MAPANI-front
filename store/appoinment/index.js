@@ -21,7 +21,7 @@ const defaultState = {
     advocacy: false,
     clinicalPsychology: false,
   },
-  appointmentSearchOptions: {
+  searchOptions: {
     code: "",
     representativeFirstName: "",
     representativeLastName: "",

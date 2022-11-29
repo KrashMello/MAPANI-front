@@ -87,8 +87,8 @@
     <DialogForm
       :title="
         dialog.formAdd === true
-          ? 'Agendar Nueva Cita'
-          : 'Modificar Cita ' + appointment.code
+          ? `Agendar Nueva Cita`
+          : `Modificar Cita ${appointment.code}`
       "
       :dialog="dialog.show"
       @close="closeDialog"
@@ -108,7 +108,7 @@
       @close="closeDrawerSearch"
     >
       <template #form>
-        <!-- <forms-search-appointment></forms-search-appointment> -->
+        <forms-search-appointment></forms-search-appointment>
       </template>
     </drawer-search>
   </div>
