@@ -13,7 +13,7 @@
               dialog.formAdd = true;
             "
           >
-             Agregar empleado
+            Agregar empleado
             <v-icon dark right>mdi-plus</v-icon>
           </v-btn>
         </v-col>
@@ -39,9 +39,7 @@
                   <thead>
                     <tr>
                       <th class="text-left">Codigo</th>
-                      <th class="text-left">
-                        Nombre y apellido
-                      </th>
+                      <th class="text-left">Nombre y apellido</th>
                       <th class="text-left">Departamento</th>
                       <th class="text-left">Cargo</th>
                       <th class="text-left">acciones</th>
@@ -56,7 +54,11 @@
                     >
                       <td>{{ item.employedCode }}</td>
                       <td>
-                        {{ `${item.personalDataFirstName.split(" ")[0]} ${item.personalDataLastName.split(" ")[0]}`}}
+                        {{
+                          `${item.personalDataFirstName.split(" ")[0]} ${
+                            item.personalDataLastName.split(" ")[0]
+                          }`
+                        }}
                       </td>
                       <td>
                         {{ item.departamentName }}
@@ -82,22 +84,22 @@
         </v-col>
       </v-row>
     </v-container>
-      <!-- dialog form -->
+    <!-- dialog form -->
     <DialogForm
       :title="
         dialog.formAdd === true
           ? `Agregar Nuevo Empleado`
-          : `Modificar Empleado ${employed.employed}`
+          : `Modificar Empleado ${employed.employedCode}`
       "
       :dialog="dialog.show"
       @close="closeDialog"
     >
       <template #form>
-        <!-- <FormsAddMedicalAppoinment -->
-        <!--   :dialog-is-enable="dialog.show" -->
-        <!--   :is-aggregated="dialog.formAdd" -->
-        <!--   @close="closeDialog" -->
-        <!-- ></FormsAddMedicalAppoinment> -->
+        <FormsAddEmployed
+          :dialog-is-enable="dialog.show"
+          :is-aggregated="dialog.formAdd"
+          @close="closeDialog"
+        ></FormsAddEmployed>
       </template>
     </DialogForm>
     <!-- drawer for search  -->
@@ -111,7 +113,6 @@
       </template>
     </drawer-search>
   </div>
-
 </template>
 
 <script>
@@ -127,7 +128,7 @@ export default {
       selectedItemTable: null,
       showDrawer: false,
       activePicker: null,
-    }
+    };
   },
   computed: {
     ...mapGetters({
@@ -137,8 +138,8 @@ export default {
     }),
   },
 
-  methods: { 
-    ...mapMutations(["changePageTitle" ,"setEmployed"]),
+  methods: {
+    ...mapMutations(["changePageTitle", "setEmployed"]),
     closeDialog(data) {
       this.dialog.show = data;
       this.setEmployed({
@@ -162,6 +163,9 @@ export default {
         ethnicGroup: false,
         ethnicDescription: "",
         parrishCode: "",
+        municipalityCode: "",
+        stadeCode: "",
+        regionCode: "",
         direction: "",
         phoneNumber: "",
       });
@@ -187,7 +191,7 @@ export default {
   mounted() {
     this.socket.on("getEmployeds", async (resp) => {
       this.setEmployed(await resp.rows);
-    })
+    });
   },
 };
 </script>

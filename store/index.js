@@ -7,6 +7,7 @@ import users from "./users";
 import person from "./person";
 import appoinment from "./appoinment";
 import socket from "./socket";
+import employed from "./employed"
 
 const createStore = () => {
   return new Vuex.Store({
@@ -20,6 +21,7 @@ const createStore = () => {
       person: person,
       appoinment: appoinment,
       socket: socket,
+      employed : employed,
     },
   });
 };
