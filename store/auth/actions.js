@@ -31,7 +31,6 @@ async login({ commit }, [username, password]) {
     if (this.$cookies.get('token')){
       getters.socket.emit("verifyToken",  this.$cookies.get('token'))
       getters.socket.on("verifyToken",resp =>{
-      console.log(resp)
         if(resp){
           commit('setToken',null);
           this.$cookies.remove('token');

@@ -35,7 +35,6 @@
           <v-card rounded="xl">
             <v-card-text>
               <v-simple-table dense>
-                <template #default>
                   <thead>
                     <tr>
                       <th class="text-left">Codigo</th>
@@ -55,8 +54,8 @@
                       <td>{{ item.employedCode }}</td>
                       <td>
                         {{
-                          `${item.personalDataFirstName.split(" ")[0]} ${
-                            item.personalDataLastName.split(" ")[0]
+                          `${item.firstName.split(" ")[0]} ${
+                            item.lastName.split(" ")[0]
                           }`
                         }}
                       </td>
@@ -70,14 +69,13 @@
                           icon
                           small
                           color="warning"
-                          @click="modifyEmpolyed(item)"
+                          @click="modifyEmployed(item)"
                         >
                           <v-icon>mdi-pencil</v-icon>
                         </v-btn>
                       </td>
                     </tr>
                   </tbody>
-                </template>
               </v-simple-table>
             </v-card-text>
           </v-card>
@@ -139,36 +137,9 @@ export default {
   },
 
   methods: {
-    ...mapMutations(["changePageTitle", "setEmployed"]),
+    ...mapMutations(["changePageTitle","setEmployeds","setEmployed"]),
     closeDialog(data) {
       this.dialog.show = data;
-      this.setEmployed({
-        employedCode: "",
-        personalDataCode: "",
-        jobPositionCode: "",
-        jobPositionName: "",
-        departamentCode: "",
-        departamentName: "",
-        dateOfEntry: "",
-        dateOfDischarge: "",
-        firstName: "",
-        lastName: "",
-        genderCode: "",
-        documentTypeCode: "",
-        dni: "",
-        bornDate: "",
-        martialStausCode: "",
-        disability: false,
-        disabilityTypeCode: "",
-        ethnicGroup: false,
-        ethnicDescription: "",
-        parrishCode: "",
-        municipalityCode: "",
-        stadeCode: "",
-        regionCode: "",
-        direction: "",
-        phoneNumber: "",
-      });
     },
     closeDrawerSearch(data) {
       this.showDrawer = data;
@@ -189,8 +160,10 @@ export default {
     this.changePageTitle("Empleados");
   },
   mounted() {
+    this.socket.emit("deleteIntervalGetEmployed")
+    this.socket.emit("getEmployeds",true);
     this.socket.on("getEmployeds", async (resp) => {
-      this.setEmployed(await resp.rows);
+      this.setEmployeds(await resp.rows);
     });
   },
 };
