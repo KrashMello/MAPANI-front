@@ -4,163 +4,168 @@
       <v-card-title>
         Buscar persona
         <v-spacer></v-spacer>
-        <v-btn color="primary" fab small elevation="0">
+        <v-btn color="primary" fab small elevation="0" @click="searchPerson">
           <v-icon> mdi-magnify </v-icon>
         </v-btn>
       </v-card-title>
       <v-divider />
-      <v-card-title>Datos Mapani</v-card-title>
+      <v-card-title>Datos de Usuario</v-card-title>
       <v-row>
+        <v-col cols="12">
+          <v-text-field
+            v-model="data.username"
+            label="Nombre de usuario"
+            v-mask="upperCaseMask"
+            outlined
+            dense
+            placeholder="Ingrese el nombre de usuario"
+            :rules="rules.defaultText"
+          />
+        </v-col>
         <v-col cols="6">
+          <v-text-field
+            v-model="data.password"
+            label="Contraseña"
+            v-mask="passwordMask"
+            outlined
+            dense
+            placeholder="Ingrese la contraseña"
+            :rules="[
+              (v) => (!!v && this.isAggregated) || 'Este campo es obligatorio',
+              (v) =>
+                (v && v.length > 7) ||
+                'Este campo debe tener más de 7 caracteres',
+            ]"
+          />
+        </v-col>
+        <v-col cols="6">
+          <v-text-field
+            v-model="data.repeatPassword"
+            label="Repetir Contraseña"
+            v-mask="passwordMask"
+            outlined
+            dense
+            placeholder="Repita la contraseña"
+            :rules="[
+              (v) => !!v || 'Este campo es obligatorio',
+              this.data.password === this.data.repeatPassword ||
+                'La contraseña no coincide',
+            ]"
+          />
+        </v-col>
+        <v-col cols="12">
+          <v-text-field
+            v-model="data.securityCode"
+            label="Codigo de seguridad"
+            v-mask="passwordMask"
+            outlined
+            dense
+            placeholder="Ingrese el codigo de seguridad"
+            :rules="[
+              (v) => (!!v && !this.isAggregated) || 'Este campo es obligatorio',
+              (v) =>
+                (v && v.length > 7) ||
+                'Este campo debe tener más de 7 caracteres',
+            ]"
+          />
+        </v-col>
+
+        <v-col cols="12">
+          <v-text-field
+            v-model="data.email"
+            label="correo electronico"
+            v-mask="emailMask"
+            outlined
+            dense
+            placeholder="Ingrese el correo electronico"
+            :rules="rules.defaultEmail"
+          />
+        </v-col>
+        <v-col cols="12">
           <v-select
-            v-model="data.departamentCode"
-            label="Departamento"
-            :items="departaments"
+            v-model="data.statusCode"
+            label="Estatus"
+            :items="userStatus"
             item-text="name"
             item-value="code"
             dense
             outlined
-            :rule="rules.default"
-          ></v-select>
+          />
         </v-col>
-        <v-col cols="6">
+        <v-col cols="12">
           <v-select
-            v-model="data.jobPositionCode"
-            label="Cargo"
-            :items="jobPositions"
+            v-model="data.roleCode"
+            label="Rol del usuario"
+            :items="userRoles"
             item-text="name"
             item-value="code"
             dense
             outlined
-            :rule="rules.default"
-          ></v-select>
-        </v-col>
-        <v-col cols="12" md="6">
-          <v-menu
-            ref="menuDateOfEntry"
-            v-model="menuDateOfEntry"
-            :close-on-content-click="false"
-            transition="scale-transition"
-            offset-y
-            min-width="auto"
-          >
-            <template v-slot:activator="{ on, attrs }">
-              <v-text-field
-                v-model="data.dateOfEntry"
-                label="Fecha de ingreso"
-                prepend-icon="mdi-calendar"
-                readonly
-                dense
-                :rules="rules.default"
-                v-bind="attrs"
-                v-on="on"
-              ></v-text-field>
-            </template>
-            <v-date-picker
-              v-model="data.dateOfEntry"
-              :active-picker="activePicker"
-              :max="
-                new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-                  .toISOString()
-                  .substr(0, 10)
-              "
-              min="1950-01-01"
-              @change="saveDateOfEntry"
-            ></v-date-picker>
-          </v-menu>
-        </v-col>
-        <v-col cols="12" md="6">
-          <v-menu
-            ref="menuDateOfDischarge"
-            v-model="menuDateOfDischarge"
-            :close-on-content-click="false"
-            transition="scale-transition"
-            offset-y
-            min-width="auto"
-          >
-            <template v-slot:activator="{ on, attrs }">
-              <v-text-field
-                v-model="data.dateOfDischarge"
-                label="Fecha de egreso"
-                prepend-icon="mdi-calendar"
-                readonly
-                dense
-                v-bind="attrs"
-                v-on="on"
-              ></v-text-field>
-            </template>
-            <v-date-picker
-              v-model="data.dateOfDischarge"
-              :active-picker="activePicker"
-              :max="
-                new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-                  .toISOString()
-                  .substr(0, 10)
-              "
-              min="1950-01-01"
-              @change="saveDateOfDicharge"
-            ></v-date-picker>
-          </v-menu>
+          />
         </v-col>
       </v-row>
       <v-divider />
-      <v-divider />
-      <v-card-title>Datos personales del empleado</v-card-title>
+      <v-card-title>Datos personales del usuario</v-card-title>
       <v-row>
         <v-col cols="12" md="6">
           <v-text-field
-            v-model="data.firstName"
+            v-model="personalData.firstName"
             label="Nombres"
             v-mask="upperCaseMask"
             outlined
             dense
+            :disabled="personalData.code !== '' ? true : false"
             placeholder="Ingrese los dos nombres"
             :rules="rules.defaultText"
           ></v-text-field>
         </v-col>
         <v-col cols="12" md="6">
           <v-text-field
-            v-model="data.lastName"
+            v-model="personalData.lastName"
             label="Apellidos"
             v-mask="upperCaseMask"
             placeholder="Ingrese los dos apellidos"
             outlined
             dense
+            :disabled="personalData.code !== '' ? true : false"
             :rules="rules.defaultText"
           >
           </v-text-field>
         </v-col>
         <v-col cols="12">
           <v-select
-            v-model="data.genderCode"
+            v-model="personalData.genderCode"
             label="Genero"
             :items="genders"
             item-text="name"
             item-value="code"
             dense
+            :disabled="personalData.code !== '' ? true : false"
             outlined
             :rule="rules.default"
           ></v-select>
         </v-col>
-        <v-col cols="12" md="3">
+        <v-col cols="12" md="4">
           <v-select
-            v-model="data.documentTypeCode"
+            v-model="personalData.documentTypeCode"
             label="Tipo de documento"
             :items="documentTypes"
             item-text="acronym"
             item-value="code"
             dense
+            :disabled="personalData.code !== '' ? true : false"
             outlined
           ></v-select>
         </v-col>
-        <v-col cols="12" md="9">
+        <v-col cols="12" md="8">
           <v-text-field
-            v-model="data.dni"
+            v-model="personalData.dni"
             label="Numero de cedula"
             v-mask="dniMask"
             placeholder="Ingrese el numero de cedula"
             outlined
             dense
+            :disabled="personalData.code !== '' ? true : false"
             :rules="rules.defaultText"
           >
           </v-text-field>
@@ -169,6 +174,7 @@
           <v-menu
             ref="menuBornDate"
             v-model="menuBornDate"
+            :disabled="personalData.code !== '' ? true : false"
             :close-on-content-click="false"
             transition="scale-transition"
             offset-y
@@ -176,18 +182,19 @@
           >
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
-                v-model="data.bornDate"
+                v-model="personalData.bornDate"
                 label="Fecha de nacimiento"
                 prepend-icon="mdi-calendar"
                 readonly
                 dense
+                :disabled="personalData.code !== '' ? true : false"
                 :rules="rules.default"
                 v-bind="attrs"
                 v-on="on"
               ></v-text-field>
             </template>
             <v-date-picker
-              v-model="data.bornDate"
+              v-model="personalData.bornDate"
               :active-picker="activePicker"
               :max="
                 new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
@@ -201,127 +208,138 @@
         </v-col>
         <v-col cols="12">
           <v-select
-            v-model="data.martialStatusCode"
+            v-model="personalData.martialStatusCode"
             label="Estado civil"
             :items="martialStatus"
             item-text="name"
             item-value="code"
             dense
+            :disabled="personalData.code !== '' ? true : false"
             outlined
             :rule="rules.default"
           ></v-select>
         </v-col>
         <v-col cols="12" md="12">
           <v-checkbox
-            v-model="data.disability"
+            v-model="personalData.disability"
             label="Discapacidad"
             color="primary"
             hide-details
             dense
+            :disabled="personalData.code !== '' ? true : false"
           ></v-checkbox>
         </v-col>
         <v-col cols="12" v-if="data.disability">
           <v-select
-            v-model="data.disabilityTypeCode"
+            v-model="personalData.disabilityTypeCode"
             label="Tipo de discapacidad"
             :items="disabilitys"
             item-text="name"
             item-value="code"
             dense
+            :disabled="personalData.code !== '' ? true : false"
             outlined
           ></v-select>
         </v-col>
         <v-col cols="12">
           <v-checkbox
-            v-model="data.ethnicGroup"
+            v-model="personalData.ethnicGroup"
             label="Grupo ethnico"
             color="primary"
             hide-details
             dense
+            :disabled="personalData.code !== '' ? true : false"
           ></v-checkbox>
         </v-col>
         <v-col cols="12" v-if="data.ethnicGroup">
           <v-text-field
-            v-model="data.ethnicDescription"
+            v-model="personalData.ethnicDescription"
             label="Descripcion del grupo ethnico"
             v-mask="upperCaseMask"
             placeholder="Ingrese el grupo ethnico"
             outlined
             dense
+            :disabled="personalData.code !== '' ? true : false"
             :rules="rules.defaultText"
           >
           </v-text-field>
         </v-col>
         <v-col cols="12">
           <v-select
-            v-model="data.regionCode"
+            v-model="personalData.regionCode"
             label="Region"
             :items="regions"
             item-text="name"
             item-value="code"
             dense
+            :disabled="personalData.code !== '' ? true : false"
             outlined
             :rule="rules.default"
             @change="chargeStade"
           ></v-select>
         </v-col>
-        <v-col cols="12" v-if="data.regionCode">
+        <v-col cols="12" v-if="personalData.regionCode">
           <v-select
-            v-model="data.stadeCode"
+            v-model="personalData.stadeCode"
             label="Estado"
             :items="stades"
             item-text="name"
             item-value="code"
             dense
+            :disabled="personalData.code !== '' ? true : false"
             outlined
             :rule="rules.default"
             @change="chargeMunicipality"
           ></v-select>
         </v-col>
-        <v-col cols="12" v-if="data.stadeCode">
+        <v-col cols="12" v-if="personalData.stadeCode">
           <v-select
-            v-model="data.municipalityCode"
+            v-model="personalData.municipalityCode"
             label="Municipio"
             :items="municipality"
             item-text="name"
             item-value="code"
             dense
+            :disabled="personalData.code !== '' ? true : false"
             outlined
             :rule="rules.default"
             @change="chargeParrish"
           ></v-select>
         </v-col>
-        <v-col cols="12" v-if="data.municipalityCode">
+        <v-col cols="12" v-if="personalData.municipalityCode">
           <v-select
-            v-model="data.parrishCode"
+            v-model="personalData.parrishCode"
             label="Parroquia"
             :items="parrish"
             item-text="name"
             item-value="code"
             dense
+            :disabled="personalData.code !== '' ? true : false"
             outlined
             :rule="rules.default"
           ></v-select>
         </v-col>
-        <v-col cols="12" md="6">
+        <v-col cols="12">
           <v-text-field
-            v-model="data.direction"
+            v-model="personalData.direction"
             label="Direccion"
             outlined
             v-mask="upperCaseMask"
             dense
+            :disabled="personalData.code !== '' ? true : false"
             placeholder="Ingrese la direccion"
             :rules="rules.defaultText"
           ></v-text-field>
         </v-col>
-        <v-col cols="12" md="6">
+        <v-col cols="12">
           <v-text-field
-            v-model="data.phoneNumber"
+            v-model="personalData.phoneNumber"
             label="Numero de telefono"
             placeholder="Ingrese el numero telefonico"
             v-mask="numberPhoneMask"
             outlined
             dense
+            :disabled="personalData.code !== '' ? true : false"
             :rules="rules.defaultText"
           >
           </v-text-field>
@@ -334,7 +352,7 @@
         </v-col> -->
         <v-col cols="12" md="5">
           <v-btn block :disabled="!valid" color="primary" type="submit">
-            {{ data.employedCode ? "Editar" : "Guardar" }}
+            {{ data.code ? "Editar" : "Guardar" }}
           </v-btn>
         </v-col>
       </v-row>
@@ -345,29 +363,30 @@
 <script>
 import { mapGetters, mapMutations } from "vuex";
 export default {
-  name: "formEmployed",
+  name: "formUser",
   props: {
-    dialogIsEnable: {
+    enabled: {
       type: Boolean,
       default: false,
     },
     isAggregated: { type: Boolean, default: false },
+    title: { type: String, default: "" },
   },
   data: () => ({
     valid: true,
     genders: [],
     regions: [],
+    status: [],
+    roles: [],
     stades: [],
     municipality: [],
     parrish: [],
     martialStatus: [],
     documentTypes: [],
     disabilitys: [],
-    jobPositions: [],
-    departaments: [],
+    userRoles: [],
+    userStatus: [],
     menuBornDate: false,
-    menuDateOfEntry: false,
-    menuDateOfDischarge: false,
     activePicker: null,
     upperCaseMask: {
       mask: "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU",
@@ -378,6 +397,24 @@ export default {
         },
       },
     },
+    passwordMask: {
+      mask: "PPPPPPPPPPPPPPP",
+      tokens: {
+        P: {
+          pattern: /[a-zA-Z0-9]/,
+        },
+      },
+    },
+    emailMask: {
+      mask: "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE",
+      tokens: {
+        E: {
+          pattern: /[a-zA-Z.@_-]/,
+          transform: (v) => v.toLocaleUpperCase(),
+        },
+      },
+    },
+
     numberPhoneMask: {
       mask: "(####)###-##-##",
       tokens: {
@@ -395,6 +432,7 @@ export default {
 
     rules: {
       default: [(v) => !!v || "Este campo es obligatorio."],
+      repeatPassword: [(v) => !!v || "Este campo es obligatorio"],
       defaultText: [
         (v) => !!v || "Este campo es obligatorio.",
         (v) =>
@@ -409,122 +447,134 @@ export default {
     },
   }),
   computed: {
-    ...mapGetters({ employed: "getEmployed", token: "getToken" }),
+    ...mapGetters({
+      user: "getUser",
+      token: "getToken",
+      userPersonalData: "getUserPersonalData",
+    }),
     data() {
-      return this.employed;
+      return this.user;
+    },
+    personalData() {
+      return this.userPersonalData;
     },
   },
   watch: {
-    dialogIsEnable(newVal) {
-      if (newVal === false) {
+    enabled(val) {
+      if (!val) {
         this.$refs.form.reset();
-        this.panel = 1;
+      }
+    },
+    personalData(val) {
+      if (val.regionCode !== "") {
+        this.chargeStade();
+        this.chargeMunicipality();
+        this.chargeParrish();
       }
     },
     menuBornDate(val) {
       val && setTimeout(() => (this.activePicker = "YEAR"));
     },
-    menuDateOfEntry(val) {
-      val && setTimeout(() => (this.activePicker = "YEAR"));
-    },
-
-    menuDateOfDischarge(val) {
-      val && setTimeout(() => (this.activePicker = "YEAR"));
-    },
   },
   methods: {
-    ...mapMutations(["setEmployed"]),
+    ...mapMutations(["setUser", "setUserPersonalData"]),
     submit() {
       const re = /[()-]/gm;
-      const phoneNumber = this.data.phoneNumber.replace(re, "");
+      const phoneNumber = this.personalData.phoneNumber.replace(re, "");
       if (this.isAggregated) {
         this.$axios
           .post(
-            "api/employed",
+            "api/Users",
             {
               params: {
-                personalDataCode: this.data.personalDataCode,
-                jobPositionCode: this.data.jobPositionCode,
-                departamentCode: this.data.departamentCode,
-                dateOfEntry: this.data.dateOfEntry,
-                dateOfDischarge: this.data.dateOfDischarge,
-                firstName: this.data.firstName,
-                lastName: this.data.lastName,
-                genderCode: this.data.genderCode,
-                documentTypeCode: this.data.documentTypeCode,
-                dni: this.data.dni,
-                bornDate: this.data.bornDate,
-                martialStatusCode: this.data.martialStatusCode,
-                disability: this.data.disability,
-                disabilityTypeCode: this.data.disabilityTypeCode,
-                ethnicGroup: this.data.ethnicGroup,
-                ethnicDescription: this.data.ethnicDescription,
-                parrishCode: this.data.parrishCode,
-                direction: this.data.direction,
-                numberPhone: phoneNumber,
+                personalDataCode: this.personalData.code,
+                username: this.data.username,
+                password: this.data.password,
+                email: this.data.email,
+                statusCode: this.data.statusCode,
+                securityCode: this.data.securityCode,
+                roleCode: this.data.roleCode,
+                firstName: this.personalData.firstName,
+                lastName: this.personalData.lastName,
+                genderCode: this.personalData.genderCode,
+                documentTypeCode: this.personalData.documentTypeCode,
+                dni: this.personalData.dni,
+                bornDate: this.personalData.bornDate,
+                martialStatusCode: this.personalData.martialStatusCode,
+                disability: this.personalData.disability,
+                disabilityTypeCode: this.personalData.disabilityTypeCode,
+                ethnicGroup: this.personalData.ethnicGroup,
+                ethnicDescription: this.personalData.ethnicDescription,
+                parrishCode: this.personalData.parrishCode,
+                direction: this.personalData.direction,
+                phoneNumber: phoneNumber,
               },
             },
             {
               headers: {
-                "x-access-token": `${this.token}`,
+                "x-access-token": `${this.$cookies.get("x-access-token")}`,
               },
             }
           )
-          .then(() => {
-            this.$emit("close", false);
+          .then((resp) => {
+            this.$emit("close", { showForm: false, resp });
           })
           .catch((err) => {
             console.log(err);
           });
       } else {
-        this.$axios
-          .put(
-            "api/employed",
-            {
-              params: {
-                employedCode: this.data.employedCode,
-                personalDataCode: this.data.personalDataCode,
-                jobPositionCode: this.data.jobPositionCode,
-                departamentCode: this.data.departamentCode,
-                dateOfEntry: this.data.dateOfEntry,
-                dateOfDischarge: this.data.dateOfDischarge,
-                firstName: this.data.firstName,
-                lastName: this.data.lastName,
-                genderCode: this.data.genderCode,
-                documentTypeCode: this.data.documentTypeCode,
-                dni: this.data.dni,
-                bornDate: this.data.bornDate,
-                martialStatusCode: this.data.martialStatusCode,
-                disability: this.data.disability,
-                disabilityTypeCode: this.data.disabilityTypeCode,
-                ethnicGroup: this.data.ethnicGroup,
-                ethnicDescription: this.data.ethnicDescription,
-                parrishCode: this.data.parrishCode,
-                direction: this.data.direction,
-                numberPhone: phoneNumber,
-              },
-            },
-            {
-              headers: {
-                "x-access-token": `${this.token}`,
-              },
-            }
-          )
-          .then(() => {
-            this.$emit("close", false);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+        console.log(phoneNumber);
+        // this.$axios
+        //   .put(
+        //     "api/employed",
+        //     {
+        //       params: {
+        //         employedCode: this.data.employedCode,
+        //         personalDataCode: this.data.personalDataCode,
+        //         jobPositionCode: this.data.jobPositionCode,
+        //         departamentCode: this.data.departamentCode,
+        //         dateOfEntry: this.data.dateOfEntry,
+        //         dateOfDischarge: this.data.dateOfDischarge,
+        //         firstName: this.data.firstName,
+        //         lastName: this.data.lastName,
+        //         genderCode: this.data.genderCode,
+        //         documentTypeCode: this.data.documentTypeCode,
+        //         dni: this.data.dni,
+        //         bornDate: this.data.bornDate,
+        //         martialStatusCode: this.data.martialStatusCode,
+        //         disability: this.data.disability,
+        //         disabilityTypeCode: this.data.disabilityTypeCode,
+        //         ethnicGroup: this.data.ethnicGroup,
+        //         ethnicDescription: this.data.ethnicDescription,
+        //         parrishCode: this.data.parrishCode,
+        //         direction: this.data.direction,
+        //         numberPhone: phoneNumber,
+        //       },
+        //     },
+        //     {
+        //       headers: {
+        //         "x-access-token": `${this.token}`,
+        //       },
+        //     }
+        //   )
+        //   .then(() => {
+        //     this.$emit("close", false);
+        //   })
+        //   .catch((err) => {
+        //     console.log(err);
+        //   });
       }
+    },
+    searchPerson() {
+      this.$emit("search-person", true);
     },
     chargeStade() {
       this.$axios
         .get("api/stade", {
           headers: {
-            Authorization: `Bearer ${this.token}`,
+            "x-access-token": ` ${this.$cookies.get("x-access-token")}`,
           },
-          params: { regionCode: this.data.regionCode },
+          params: { regionCode: this.personalData.regionCode },
         })
         .then((response) => {
           this.stades = response.data;
@@ -538,10 +588,9 @@ export default {
       this.$axios
         .get("api/municipality", {
           headers: {
-            Authorization: `Bearer ${this.token}`,
+            "x-access-token": ` ${this.$cookies.get("x-access-token")}`,
           },
-
-          params: { stadeCode: this.data.stadeCode },
+          params: { stadeCode: this.personalData.stadeCode },
         })
         .then((response) => {
           this.municipality = response.data;
@@ -555,10 +604,10 @@ export default {
       this.$axios
         .get("api/parrish", {
           headers: {
-            Authorization: `Bearer ${this.token}`,
+            "x-access-token": ` ${this.$cookies.get("x-access-token")}`,
           },
 
-          params: { municipalityCode: this.data.municipalityCode },
+          params: { municipalityCode: this.personalData.municipalityCode },
         })
         .then((response) => {
           this.parrish = response.data;
@@ -569,69 +618,35 @@ export default {
         });
     },
 
-    cancel() {
-      this.$emit("cancel", false);
-      this.setEmployed({
-        employedCode: "",
-        personalDataCode: "",
-        jobPositionCode: "",
-        jobPositionName: "",
-        departamentCode: "",
-        departamentName: "",
-        dateOfEntry: "",
-        dateOfDischarge: "",
-        firstName: "",
-        lastName: "",
-        genderCode: "",
-        documentTypeCode: "",
-        dni: "",
-        bornDate: "",
-        martialStausCode: "",
-        disability: false,
-        disabilityTypeCode: "",
-        ethnicGroup: false,
-        ethnicDescription: "",
-        parrishCode: "",
-        municipalityCode: "",
-        stadeCode: "",
-        regionCode: "",
-        direction: "",
-        phoneNumber: "",
-      });
+    close() {
+      this.$emit("close", false);
     },
     saveBornDate(date) {
       this.$refs.menuBornDate.save(date);
     },
-    saveDateOfEntry(date) {
-      this.$refs.menuDateOfEntry.save(date);
-    },
-
-    saveDateOfDicharge(date) {
-      this.$refs.menuDateOfDischarge.save(date);
-    },
   },
-  created() {
+  mounted() {
     this.$axios
-      .get("api/jobPosition", {
+      .get("api/userStatus", {
         headers: {
-          Authorization: `Bearer ${this.token}`,
+          "x-access-token": ` ${this.$cookies.get("x-access-token")}`,
         },
       })
       .then((response) => {
-        this.jobPositions = response.data;
+        this.userStatus = response.data;
         // console.log(response.data)
       })
       .catch((err) => {
         console.log(err);
       });
     this.$axios
-      .get("api/departament", {
+      .get("api/userRoles", {
         headers: {
-          Authorization: `Bearer ${this.token}`,
+          "x-access-token": ` ${this.$cookies.get("x-access-token")}`,
         },
       })
       .then((response) => {
-        this.departaments = response.data;
+        this.userRoles = response.data;
         // console.log(response.data)
       })
       .catch((err) => {
@@ -640,7 +655,7 @@ export default {
     this.$axios
       .get("api/gender", {
         headers: {
-          Authorization: `Bearer ${this.token}`,
+          "x-access-token": ` ${this.$cookies.get("x-access-token")}`,
         },
       })
       .then((response) => {
@@ -653,7 +668,7 @@ export default {
     this.$axios
       .get("api/martialStatus", {
         headers: {
-          Authorization: `Bearer ${this.token}`,
+          "x-access-token": ` ${this.$cookies.get("x-access-token")}`,
         },
       })
       .then((response) => {
@@ -667,7 +682,7 @@ export default {
     this.$axios
       .get("api/documentType", {
         headers: {
-          Authorization: `Bearer ${this.token}`,
+          "x-access-token": ` ${this.$cookies.get("x-access-token")}`,
         },
       })
       .then((response) => {
@@ -681,7 +696,7 @@ export default {
     this.$axios
       .get("api/disability", {
         headers: {
-          Authorization: `Bearer ${this.token}`,
+          "x-access-token": ` ${this.$cookies.get("x-access-token")}`,
         },
       })
       .then((response) => {
@@ -695,7 +710,7 @@ export default {
     this.$axios
       .get("api/region", {
         headers: {
-          Authorization: `Bearer ${this.token}`,
+          "x-access-token": ` ${this.$cookies.get("x-access-token")}`,
         },
       })
       .then((response) => {

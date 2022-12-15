@@ -12,6 +12,7 @@
       :rules="rules.username"
       label="Nombre de usuario"
       outlined
+      v-mask="upperCaseMask"
       placeholder="Ingrese el nombre de usuario"
       required
       @focus="resetValidation"
@@ -67,6 +68,16 @@ export default {
       username: null,
       password: null,
     },
+    upperCaseMask: {
+      mask: "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU",
+      tokens: {
+        U: {
+          pattern: /[a-zA-Z\s]/,
+          transform: (v) => v.toLocaleUpperCase(),
+        },
+      },
+    },
+
     rules: {
       default: [(v) => !!v || "Este campo es obligatorio."],
       username: [

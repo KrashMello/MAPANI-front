@@ -5,9 +5,10 @@ import mutations from "./mutations";
 const defaultState = {
   token: null,
   auth: {
-    userData: null, 
+    userData: null,
     permissions: null,
-    },
+  },
+  verifyTokenInterval: null,
 };
 
 const inBrowser = typeof window !== "undefined";

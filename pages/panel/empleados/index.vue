@@ -35,47 +35,47 @@
           <v-card rounded="xl">
             <v-card-text>
               <v-simple-table dense>
-                  <thead>
-                    <tr>
-                      <th class="text-left">Codigo</th>
-                      <th class="text-left">Nombre y apellido</th>
-                      <th class="text-left">Departamento</th>
-                      <th class="text-left">Cargo</th>
-                      <th class="text-left">acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr
-                      v-for="item in employeds"
-                      :key="item.employedCode"
-                      @mouseover="selectItem(item.employedCode)"
-                      @mouseleave="unSelectItem()"
-                    >
-                      <td>{{ item.employedCode }}</td>
-                      <td>
-                        {{
-                          `${item.firstName.split(" ")[0]} ${
-                            item.lastName.split(" ")[0]
-                          }`
-                        }}
-                      </td>
-                      <td>
-                        {{ item.departamentName }}
-                      </td>
-                      <td>{{ item.jobPositionName }}</td>
-                      <td>
-                        <v-btn
-                          v-if="selectedItemTable === item.employedCode"
-                          icon
-                          small
-                          color="warning"
-                          @click="modifyEmployed(item)"
-                        >
-                          <v-icon>mdi-pencil</v-icon>
-                        </v-btn>
-                      </td>
-                    </tr>
-                  </tbody>
+                <thead>
+                  <tr>
+                    <th class="text-left">Codigo</th>
+                    <th class="text-left">Nombre y apellido</th>
+                    <th class="text-left">Departamento</th>
+                    <th class="text-left">Cargo</th>
+                    <th class="text-left">acciones</th>
+                  </tr>
+                </thead>
+                <tbody v-if="employeds.length > 0">
+                  <tr
+                    v-for="item in employeds"
+                    :key="item.employedCode"
+                    @mouseover="selectItem(item.employedCode)"
+                    @mouseleave="unSelectItem()"
+                  >
+                    <td>{{ item.employedCode }}</td>
+                    <td>
+                      {{
+                        `${item.firstName.split(" ")[0]} ${
+                          item.lastName.split(" ")[0]
+                        }`
+                      }}
+                    </td>
+                    <td>
+                      {{ item.departamentName }}
+                    </td>
+                    <td>{{ item.jobPositionName }}</td>
+                    <td>
+                      <v-btn
+                        v-if="selectedItemTable === item.employedCode"
+                        icon
+                        small
+                        color="warning"
+                        @click="modifyEmployed(item)"
+                      >
+                        <v-icon>mdi-pencil</v-icon>
+                      </v-btn>
+                    </td>
+                  </tr>
+                </tbody>
               </v-simple-table>
             </v-card-text>
           </v-card>
@@ -130,14 +130,13 @@ export default {
   },
   computed: {
     ...mapGetters({
-      socket: "socket",
       employeds: "getEmployeds",
       employed: "getEmployed",
     }),
   },
 
   methods: {
-    ...mapMutations(["changePageTitle","setEmployeds","setEmployed"]),
+    ...mapMutations(["changePageTitle", "setEmployeds", "setEmployed"]),
     closeDialog(data) {
       this.dialog.show = data;
     },
@@ -159,12 +158,33 @@ export default {
   created() {
     this.changePageTitle("Empleados");
   },
-  mounted() {
-    this.socket.emit("deleteIntervalGetEmployed")
-    this.socket.emit("getEmployeds",true);
-    this.socket.on("getEmployeds", async (resp) => {
-      this.setEmployeds(await resp.rows);
-    });
+  async mounted() {
+    await this.$axios
+      .get(
+        "api/employed",
+        {
+          params: {
+            employedCode: "",
+            jobPositionCode: "",
+            regionCode: "",
+            stadeCode: "",
+            municipalityCode: "",
+            parrishCode: "",
+            dni: "",
+            dateOfEntry: "",
+            dateOfDiscarge: "",
+            departamentCode: "",
+          },
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${this.token}`,
+          },
+        }
+      )
+      .then((resp) => {
+        this.setEmployeds(resp.data);
+      });
   },
 };
 </script>

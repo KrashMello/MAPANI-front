@@ -9,8 +9,10 @@
             block
             rounded
             @click="
-              dialog.show = !dialog.show;
-              dialog.formAdd = true;
+              () => {
+                showForm = true;
+                formAdd = true;
+              }
             "
           >
             Agregar usuario
@@ -23,7 +25,11 @@
             rounded
             block
             dark
-            @click="showDrawer = !showDrawer"
+            @click="
+              () => {
+                showDrawer = !showDrawer;
+              }
+            "
           >
             Buscar
             <v-icon dark right>mdi-magnify</v-icon>
@@ -31,76 +37,50 @@
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="12">
-          <v-card rounded="xl">
-            <v-card-text>
-              <v-simple-table dense>
-                  <thead>
-                    <tr>
-                      <th class="text-left">Codigo</th>
-                      <th class="text-left">Nombre y apellido</th>
-                      <th class="text-left">Role</th>
-                      <th class="text-left">Status</th>
-                      <th class="text-left">acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr
-                      v-for="item in employeds"
-                      :key="item.employedCode"
-                      @mouseover="selectItem(item.employedCode)"
-                      @mouseleave="unSelectItem()"
-                    >
-                      <td>{{ item.employedCode }}</td>
-                      <td>
-                        {{
-                          `${item.firstName.split(" ")[0]} ${
-                            item.lastName.split(" ")[0]
-                          }`
-                        }}
-                      </td>
-                      <td>
-                        {{ item.departamentName }}
-                      </td>
-                      <td>{{ item.jobPositionName }}</td>
-                      <td>
-                        <v-btn
-                          v-if="selectedItemTable === item.employedCode"
-                          icon
-                          small
-                          color="warning"
-                          @click="modifyEmployed(item)"
-                        >
-                          <v-icon>mdi-pencil</v-icon>
-                        </v-btn>
-                      </td>
-                    </tr>
-                  </tbody>
-              </v-simple-table>
-            </v-card-text>
+        <v-col :cols="tableCols">
+          <v-card class="overflow-hidden" rounded="xl">
+            <v-sheet class="overflow-y-auto" height="62vh" max-height="62vh">
+              <v-card-text>
+                <table-users @modify="modifyUser" />
+              </v-card-text>
+            </v-sheet>
           </v-card>
+        </v-col>
+        <v-col cols="5">
+          <v-expand-transition>
+            <cards-forms
+              v-show="showForm"
+              :title="
+                formAdd === true
+                  ? `Agregar Nuevo Usuario`
+                  : `Modificar Usuario ${user.code}`
+              "
+              @close="closeForm"
+            >
+              <template #form>
+                <forms-add-user
+                  :enabled="showForm"
+                  :is-aggregated="formAdd"
+                  @search-person="changeSearchDialog"
+                  @close="closeForm"
+                />
+              </template>
+            </cards-forms>
+          </v-expand-transition>
         </v-col>
       </v-row>
     </v-container>
-    <!-- dialog form -->
-    <DialogForm
-      :title="
-        dialog.formAdd === true
-          ? `Agregar Nuevo Empleado`
-          : `Modificar Empleado ${employed.employedCode}`
-      "
-      :dialog="dialog.show"
-      @close="closeDialog"
+    <!-- dialog form  -->
+    <Dialog-tables
+      title="Buscar Persona"
+      :dialog="searchPersonDialog"
+      @close="changeSearchDialog"
     >
-      <template #form>
-        <FormsAddEmployed
-          :dialog-is-enable="dialog.show"
-          :is-aggregated="dialog.formAdd"
-          @close="closeDialog"
-        ></FormsAddEmployed>
+      <template #table>
+        <table-search-user-personal-data @selected="changeSearchDialog" />
       </template>
-    </DialogForm>
-    <!-- drawer for search  -->
+    </Dialog-tables>
+    <!-- drawer for search -->
     <drawer-search
       :show-drawer="showDrawer"
       title="filtrar"
@@ -116,55 +96,112 @@
 <script>
 import { mapMutations, mapGetters } from "vuex";
 export default {
-  name: "EmpleadosPanel",
+  name: "UsersPanel",
   data: () => {
     return {
       dialog: {
         show: false,
         formAdd: true,
       },
-      selectedItemTable: null,
+      showForm: false,
+      formAdd: true,
+      tableCols: 12,
       showDrawer: false,
-      activePicker: null,
+      searchPersonDialog: false,
     };
   },
   computed: {
     ...mapGetters({
       socket: "socket",
-      employeds: "getEmployeds",
-      employed: "getEmployed",
+      user: "getUser",
     }),
+  },
+  watch: {
+    showForm(val) {
+      if (!val)
+        setTimeout(() => {
+          this.tableCols = 12;
+        }, 300);
+      else this.tableCols = 7;
+    },
   },
 
   methods: {
-    ...mapMutations(["changePageTitle","setEmployeds","setEmployed"]),
-    closeDialog(data) {
-      this.dialog.show = data;
+    ...mapMutations([
+      "changePageTitle",
+      "setUser",
+      "setUsers",
+      "setUserPersonalData",
+    ]),
+    closeForm(data) {
+      this.showForm = data.showForm;
+      this.setUser({
+        code: "",
+        username: "",
+        password: "",
+        securityCode: "",
+        email: "",
+        statusCode: "",
+        roleCode: "",
+      });
+      this.setUserPersonalData({
+        personalDataCode: "",
+        firstName: "",
+        lastName: "",
+        genderCode: "",
+        documentTypeCode: "",
+        dni: "",
+        bornDate: "",
+        martialStatusCode: "",
+        disability: false,
+        disabilityTypeCode: "",
+        ethnicGroup: false,
+        ethnicDescription: "",
+        parrishCode: "",
+        direction: "",
+        phoneNumber: "",
+      });
+      if (data.resp)
+        this.$axios
+          .get("api/Users", {
+            headers: {
+              "x-access-token": ` ${this.$cookies.get("x-access-token")}`,
+            },
+            params: {
+              userCode: "",
+              roleCode: "",
+              statusCode: "",
+              username: "",
+              email: "",
+              parrishCode: "",
+              dni: "",
+              stadeCode: "",
+              municipalityCode: "",
+              regionCode: "",
+            },
+          })
+          .then(async (resp) => {
+            this.setUsers(await resp.data);
+          });
+    },
+    changeSearchDialog(data) {
+      this.searchPersonDialog = data;
+    },
+    modifyUser(data) {
+      if (!this.showForm) {
+        this.showForm = data.showForm;
+        this.formAdd = data.formAdd;
+      }
     },
     closeDrawerSearch(data) {
       this.showDrawer = data;
     },
-    modifyEmployed(employed) {
-      this.setEmployed(employed);
-      this.dialog.show = !this.dialog.show;
-      this.dialog.formAdd = false;
-    },
-    selectItem(i) {
-      this.selectedItemTable = i;
-    },
-    unSelectItem() {
-      this.selectedItemTable = null;
+    showSearchPersonDialog(data) {
+      this.searchPersonDialog = data;
     },
   },
   created() {
-    this.changePageTitle("Empleados");
-  },
-  mounted() {
-    this.socket.emit("deleteIntervalGetEmployed")
-    this.socket.emit("getEmployeds",true);
-    this.socket.on("getEmployeds", async (resp) => {
-      this.setEmployeds(await resp.rows);
-    });
+    this.changePageTitle("Usuarios");
   },
 };
 </script>

@@ -5,4 +5,16 @@ export default {
   findPass: (state) => (password) => {
     return state.users.find((user) => user.password === password);
   },
+  getUsers: (state) => {
+    return state.users;
+  },
+  getUser: (state) => {
+    return state.user;
+  },
+  getUserPersonalData: (state) => {
+    return state.userPersonalData;
+  },
+  getUsersPersonalData: (state) => {
+    return state.usersPersonalData;
+  },
 };
