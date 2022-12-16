@@ -15,7 +15,7 @@
               }
             "
           >
-            Agregar empleado
+            Agregar modulo
             <v-icon dark right>mdi-plus</v-icon>
           </v-btn>
         </v-col>
@@ -25,7 +25,11 @@
             rounded
             block
             dark
-            @click="showDrawer = !showDrawer"
+            @click="
+              () => {
+                showDrawer = !showDrawer;
+              }
+            "
           >
             Buscar
             <v-icon dark right>mdi-magnify</v-icon>
@@ -37,7 +41,7 @@
           <v-card class="overflow-hidden" rounded="xl">
             <v-sheet class="overflow-y-auto" height="62vh" max-height="62vh">
               <v-card-text>
-                <table-employed @modify="modifyEmployed" />
+                <table-modules @modify="modifyModule" />
               </v-card-text>
             </v-sheet>
           </v-card>
@@ -48,16 +52,15 @@
               v-show="showForm"
               :title="
                 formAdd === true
-                  ? `Agregar Nuevo Empleado`
-                  : `Modificar Empleado ${employed.code}`
+                  ? `Agregar Nuevo Modulo`
+                  : `Modificar Modulo ${mod.code}`
               "
               @close="closeForm"
             >
               <template #form>
-                <forms-add-employed
+                <forms-add-modules
                   :enabled="showForm"
                   :is-aggregated="formAdd"
-                  @search-person="changeSearchDialog"
                   @close="closeForm"
                 />
               </template>
@@ -66,27 +69,24 @@
         </v-col>
       </v-row>
     </v-container>
-    <!-- dialog form -->
-    <Dialog-tables
-      title="Buscar Persona"
-      :dialog="searchPersonDialog"
-      @close="changeSearchDialog"
-    >
-      <template #table>
-        <table-search-user-personal-data @selected="changeSearchDialog" />
-      </template>
-    </Dialog-tables>
-
-    <!-- drawer for search  -->
+    <!-- dialog form  -->
+    <!-- <Dialog-tables -->
+    <!--   title="Buscar Persona" -->
+    <!--   :dialog="searchPersonDialog" -->
+    <!--   @close="changeSearchDialog" -->
+    <!-- > -->
+    <!--   <template #table> -->
+    <!--     <table-search-user-personal-data @selected="changeSearchDialog" /> -->
+    <!--   </template> -->
+    <!-- </Dialog-tables> -->
+    <!-- drawer for search -->
     <drawer-search
       :show-drawer="showDrawer"
       title="filtrar"
       @close="closeDrawerSearch"
     >
       <template #form>
-        <forms-search-employed
-          @close="closeDrawerSearch"
-        ></forms-search-employed>
+        <forms-search-modules @close="closeDrawerSearch" />
       </template>
     </drawer-search>
   </div>
@@ -95,7 +95,7 @@
 <script>
 import { mapMutations, mapGetters } from "vuex";
 export default {
-  name: "EmpleadosPanel",
+  name: "modulesPanel",
   data: () => {
     return {
       dialog: {
@@ -111,7 +111,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      employed: "getEmployed",
+      mod: "getModule",
     }),
   },
   watch: {
@@ -125,86 +125,51 @@ export default {
   },
 
   methods: {
-    ...mapMutations([
-      "changePageTitle",
-      "setEmployeds",
-      "setEmployed",
-      "setUserPersonalData",
-    ]),
+    ...mapMutations(["changePageTitle", "setModule", "setModules"]),
     closeForm(data) {
       this.showForm = data.showForm;
-      this.setEmployed({
+      this.setModule({
         code: "",
-        personalDataCode: "",
-        jobPositionCode: "",
-        jobPositionName: "",
-        departamentCode: "",
-        departamentName: "",
-        dateOfEntry: "",
-        dateOfDischarge: "",
-      });
-      this.setUserPersonalData({
-        code: "",
-        firstName: "",
-        lastName: "",
-        genderCode: "",
-        documentTypeCode: "",
-        dni: "",
-        bornDate: "",
-        martialStatusCode: "",
-        disability: false,
-        disabilityTypeCode: "",
-        ethnicGroup: false,
-        ethnicDescription: "",
-        parrishCode: "",
-        direction: "",
-        phoneNumber: "",
+        name: "",
+        src: "",
+        icon: "",
+        unabled: false,
+        hasChildren: false,
+        order: 0,
+        fatherCode: "",
       });
       if (data.resp)
         this.$axios
-          .get("api/employed", {
+          .get("api/modules", {
             headers: {
               "x-access-token": ` ${this.$cookies.get("x-access-token")}`,
             },
             params: {
-              jobPositionCode: "",
-              regionCode: "",
-              stadeCode: "",
-              municipalityCode: "",
-              parrishCode: "",
-              dni: "",
-              dateOfEntry: "",
-              dateOfDiscarge: "",
-              departamentCode: "",
+              code: "",
+              name: "",
+              unabled: false,
+              fatherCode: "",
             },
           })
           .then(async (resp) => {
-            this.setEmployeds(await resp.data);
+            this.setModules(await resp.data);
           });
     },
-
-    changeSearchDialog(data) {
-      this.searchPersonDialog = data;
+    modifyModule(data) {
+      if (!this.showForm) {
+        this.showForm = data.showForm;
+        this.formAdd = data.formAdd;
+      }
     },
     closeDrawerSearch(data) {
       this.showDrawer = data;
     },
-    modifyEmployed(data) {
-       if (!this.showForm) {
-        this.showForm = data.showForm;
-        this.formAdd = data.formAdd;
-      }
-
-    },
-    selectItem(i) {
-      this.selectedItemTable = i;
-    },
-    unSelectItem() {
-      this.selectedItemTable = null;
+    showSearchPersonDialog(data) {
+      this.searchPersonDialog = data;
     },
   },
   created() {
-    this.changePageTitle("Empleados");
+    this.changePageTitle("Modulos");
   },
 };
 </script>

@@ -72,7 +72,7 @@ export default {
         statusCode: user.statusCode,
       };
       let userPersonalData = {
-        personalDataCode: user.personalDataCode,
+        code: user.personalDataCode,
         firstName: user.firstName,
         lastName: user.lastName,
         genderCode: user.genderCode,

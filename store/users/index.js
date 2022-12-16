@@ -14,7 +14,7 @@ const defaultState = {
     roleCode: "",
   },
   userPersonalData: {
-    personalDataCode: "",
+    code: "",
     firstName: "",
     lastName: "",
     genderCode: "",
@@ -31,6 +31,12 @@ const defaultState = {
     phoneNumber: "",
   },
   usersPersonalData: [],
+  searchOptions: {
+    username: "",
+    roleCode: "",
+    statusCode: "",
+    email: "",
+  },
 };
 
 const inBrowser = typeof window !== "undefined";

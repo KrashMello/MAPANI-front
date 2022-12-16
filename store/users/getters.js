@@ -17,4 +17,7 @@ export default {
   getUsersPersonalData: (state) => {
     return state.usersPersonalData;
   },
+  getUserSearchOptions: (state) => {
+    return state.searchOptions;
+  },
 };

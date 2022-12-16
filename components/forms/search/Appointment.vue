@@ -123,7 +123,6 @@ export default {
   },
   computed: {
     ...mapGetters({
-      socket: "socket",
       searchOptions: "getAppointmentSearchOptions",
     }),
     data() {

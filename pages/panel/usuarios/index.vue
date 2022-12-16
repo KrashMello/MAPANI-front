@@ -87,7 +87,7 @@
       @close="closeDrawerSearch"
     >
       <template #form>
-        <!-- <forms-search-appointment></forms-search-appointment> -->
+        <forms-search-users @close="closeDrawerSearch" />
       </template>
     </drawer-search>
   </div>
@@ -112,7 +112,6 @@ export default {
   },
   computed: {
     ...mapGetters({
-      socket: "socket",
       user: "getUser",
     }),
   },
@@ -145,7 +144,7 @@ export default {
         roleCode: "",
       });
       this.setUserPersonalData({
-        personalDataCode: "",
+        code: "",
         firstName: "",
         lastName: "",
         genderCode: "",

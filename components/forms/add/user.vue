@@ -1,7 +1,7 @@
 <template>
   <v-form v-model="valid" ref="form" @submit.prevent="submit">
     <v-container class="mt-3">
-      <v-card-title>
+      <v-card-title v-if="isAggregated">
         Buscar persona
         <v-spacer></v-spacer>
         <v-btn color="primary" fab small elevation="0" @click="searchPerson">
@@ -24,6 +24,7 @@
         </v-col>
         <v-col cols="6">
           <v-text-field
+            v-if="isAggregated"
             v-model="data.password"
             label="Contraseña"
             v-mask="passwordMask"
@@ -31,7 +32,7 @@
             dense
             placeholder="Ingrese la contraseña"
             :rules="[
-              (v) => (!!v && this.isAggregated) || 'Este campo es obligatorio',
+              (v) => !!v || 'Este campo es obligatorio',
               (v) =>
                 (v && v.length > 7) ||
                 'Este campo debe tener más de 7 caracteres',
@@ -40,6 +41,7 @@
         </v-col>
         <v-col cols="6">
           <v-text-field
+            v-if="isAggregated"
             v-model="data.repeatPassword"
             label="Repetir Contraseña"
             v-mask="passwordMask"
@@ -55,6 +57,7 @@
         </v-col>
         <v-col cols="12">
           <v-text-field
+            v-if="isAggregated"
             v-model="data.securityCode"
             label="Codigo de seguridad"
             v-mask="passwordMask"
@@ -523,46 +526,47 @@ export default {
             console.log(err);
           });
       } else {
-        console.log(phoneNumber);
-        // this.$axios
-        //   .put(
-        //     "api/employed",
-        //     {
-        //       params: {
-        //         employedCode: this.data.employedCode,
-        //         personalDataCode: this.data.personalDataCode,
-        //         jobPositionCode: this.data.jobPositionCode,
-        //         departamentCode: this.data.departamentCode,
-        //         dateOfEntry: this.data.dateOfEntry,
-        //         dateOfDischarge: this.data.dateOfDischarge,
-        //         firstName: this.data.firstName,
-        //         lastName: this.data.lastName,
-        //         genderCode: this.data.genderCode,
-        //         documentTypeCode: this.data.documentTypeCode,
-        //         dni: this.data.dni,
-        //         bornDate: this.data.bornDate,
-        //         martialStatusCode: this.data.martialStatusCode,
-        //         disability: this.data.disability,
-        //         disabilityTypeCode: this.data.disabilityTypeCode,
-        //         ethnicGroup: this.data.ethnicGroup,
-        //         ethnicDescription: this.data.ethnicDescription,
-        //         parrishCode: this.data.parrishCode,
-        //         direction: this.data.direction,
-        //         numberPhone: phoneNumber,
-        //       },
-        //     },
-        //     {
-        //       headers: {
-        //         "x-access-token": `${this.token}`,
-        //       },
-        //     }
-        //   )
-        //   .then(() => {
-        //     this.$emit("close", false);
-        //   })
-        //   .catch((err) => {
-        //     console.log(err);
-        //   });
+        this.$axios
+          .put(
+            "api/Users",
+            {
+              params: {
+                personalDataCode: this.personalData.code,
+                userCode: this.data.code,
+                username: this.data.username,
+                password: this.data.password,
+                email: this.data.email,
+                statusCode: this.data.statusCode,
+                securityCode: this.data.securityCode,
+                roleCode: this.data.roleCode,
+                firstName: this.personalData.firstName,
+                lastName: this.personalData.lastName,
+                genderCode: this.personalData.genderCode,
+                documentTypeCode: this.personalData.documentTypeCode,
+                dni: this.personalData.dni,
+                bornDate: this.personalData.bornDate,
+                martialStatusCode: this.personalData.martialStatusCode,
+                disability: this.personalData.disability,
+                disabilityTypeCode: this.personalData.disabilityTypeCode,
+                ethnicGroup: this.personalData.ethnicGroup,
+                ethnicDescription: this.personalData.ethnicDescription,
+                parrishCode: this.personalData.parrishCode,
+                direction: this.personalData.direction,
+                phoneNumber: phoneNumber,
+              },
+            },
+            {
+              headers: {
+                "x-access-token": `${this.$cookies.get("x-access-token")}`,
+              },
+            }
+          )
+          .then((resp) => {
+            this.$emit("close", { showForm: false, resp });
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       }
     },
     searchPerson() {
