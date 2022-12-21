@@ -7,25 +7,21 @@
       app
       elevate-on-scroll
     >
-      <v-toolbar-title>
-        <img width="19%" src="/logo-light.png" />
-      </v-toolbar-title>
-
+      <img src="/logo-185x49.png" />
       <v-spacer></v-spacer>
-      <!-- <v-btn icon>
-        <v-icon>mdi-email</v-icon>
-      </v-btn> 
-      <v-btn icon>
-        <v-icon>mdi-bell</v-icon>
-      </v-btn> -->
-      <v-list color="secondary" dense class="py-0" width="260">
+      <v-list
+        dense
+        rounded
+        class="mt-1 pa-0"
+        color="#00000000"
+        v-if="$vuetify.breakpoint.mdAndUp"
+      >
         <v-menu offset-y>
           <template #activator="{ on, attrs }">
-            <v-list-item v-bind="attrs" v-on="on" class="px-0">
+            <v-list-item v-bind="attrs" v-on="on" class="px-2">
               <v-list-item-avatar>
                 <v-img src="/user.jpg"></v-img>
               </v-list-item-avatar>
-
               <v-list-item-content>
                 <v-list-item-title>
                   {{
@@ -54,7 +50,6 @@
                   }}
                 </v-list-item-subtitle>
               </v-list-item-content>
-
               <v-list-item-action class="ma-0">
                 <v-btn icon>
                   <v-icon> mdi-menu-down </v-icon>
@@ -62,7 +57,74 @@
               </v-list-item-action>
             </v-list-item>
           </template>
-          <v-list color="secondary">
+          <v-list>
+            <v-list-item to="/panel/usuarios">
+              <v-list-item-title>
+                <v-icon> mdi-shield-account </v-icon>
+                Perfil
+              </v-list-item-title>
+            </v-list-item>
+            <v-list-item to="/panel/configuracion">
+              <v-list-item-title>
+                <v-icon> mdi-cog </v-icon>
+                Configuración
+              </v-list-item-title>
+            </v-list-item>
+            <v-list-item @click="logout">
+              <v-list-item-title>
+                <v-icon> mdi-logout </v-icon>
+                Salir
+              </v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </v-list>
+      <v-list dense rounded class="mt-1 pa-0" color="#00000000" v-else>
+        <v-menu offset-y>
+          <template #activator="{ on, attrs }">
+            <v-list-item v-bind="attrs" v-on="on" class="px-2">
+              <v-list-item-avatar class="ma-0">
+                <v-img src="/user.jpg"></v-img>
+              </v-list-item-avatar>
+              <v-list-item-action class="ma-0">
+                <v-btn icon>
+                  <v-icon> mdi-menu-down </v-icon>
+                </v-btn>
+              </v-list-item-action>
+            </v-list-item>
+          </template>
+          <v-list>
+            <v-list-item two-line>
+              <v-list-item-content>
+                <v-list-item-title>
+                  {{
+                    `${
+                      auth.userData
+                        ? auth.userData.firstName.split(" ")[0]
+                        : "primer nombre"
+                    } ${
+                      auth.userData
+                        ? auth.userData.lastName.split(" ")[0]
+                        : "primer apellido"
+                    }`
+                  }}
+                </v-list-item-title>
+                <v-list-item-subtitle v-if="auth.userData">
+                  {{
+                    `${
+                      auth.userData.departamentName
+                        ? auth.userData.departamentName
+                        : "Membresia"
+                    } | ${
+                      auth.userData.cargeName
+                        ? auth.userData.cargeName
+                        : auth.userData.roleName
+                    }`
+                  }}
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+            <v-divider></v-divider>
             <v-list-item to="/panel/usuarios">
               <v-list-item-title>
                 <v-icon> mdi-shield-account </v-icon>
@@ -87,34 +149,39 @@
     </v-app-bar>
 
     <v-navigation-drawer
-      v-model="drawer"
       :mini-variant="miniVariant"
       :clipped="clipped"
-      fixed
-      app
+      v-model="drawer"
       color="primary"
+      fixed
       dark
+      app
     >
       <!-- list item -->
-      <v-list-item-group v-model="selectedModule" color="accent">
+      <v-list shaped v-model="selectedModule">
         <template v-for="(menu, i) in father">
           <v-list-item
             v-if="!menu.hasChildren"
             :key="i"
-            nuxt
             :to="menu.moduleSrc"
             exact
+            nuxt
           >
-            <v-list-item-icon>
-              <v-icon>
-                {{ menu.moduleIcon }}
-              </v-icon>
-              <v-list-item-title>
-                {{ menu.moduleName }}
-              </v-list-item-title>
-            </v-list-item-icon>
+            <v-list-item-action>
+              <v-icon>{{ menu.moduleIcon }}</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>{{ menu.moduleName }}</v-list-item-title>
+            </v-list-item-content>
           </v-list-item>
-          <v-list-group v-else :key="i" :prepend-icon="menu.moduleIcon">
+
+          <v-list-group
+            v-else
+            :key="i"
+            :prepend-icon="menu.moduleIcon"
+            color="secondary"
+            no-action
+          >
             <template #activator>
               <v-list-item-content>
                 <v-list-item-title>{{ menu.moduleName }}</v-list-item-title>
@@ -125,25 +192,23 @@
                 (v) => v.fatherCode === menu.moduleCode
               )"
               :key="j"
-              nuxt
               :to="children.moduleSrc"
               router
               exact
+              nuxt
             >
               <v-list-item-title>{{ children.moduleName }}</v-list-item-title>
-
-              <v-list-item-icon>
-                <v-icon>{{ children.moduleIcon }} </v-icon>
-              </v-list-item-icon>
+              <v-list-item-action>
+                <v-icon>{{ children.moduleIcon }}</v-icon>
+              </v-list-item-action>
             </v-list-item>
           </v-list-group>
         </template>
-      </v-list-item-group>
-
+      </v-list>
       <!-- logout -->
       <template #append>
         <div class="pa-2">
-          <v-btn block color="accent" @click="logout">
+          <v-btn rounded block color="accent" @click="logout">
             <v-icon>mdi-logout</v-icon>
             Salir
           </v-btn>
