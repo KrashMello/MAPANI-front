@@ -9,6 +9,7 @@ import appoinment from "./appoinment";
 import socket from "./socket";
 import employed from "./employed";
 import permissions from "./permissions";
+import sponsor from "./sponsor";
 
 const createStore = () => {
   return new Vuex.Store({
@@ -24,6 +25,7 @@ const createStore = () => {
       socket: socket,
       employed : employed,
       permissions: permissions,
+      sponsor: sponsor,
     },
   });
 };
