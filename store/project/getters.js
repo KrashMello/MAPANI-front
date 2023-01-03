@@ -1,11 +1,11 @@
 export default {
-  getAppointment: (state) => {
-    return state.appointment;
+  getProjects: (state) => {
+    return state.projects;
   },
-  getAppointments: (state) => {
-    return state.appointments;
+  getProject: (state) => {
+    return state.project;
   },
-  getAppointmentSearchOptions: (state) => {
+  getProjectsSearchOptions: (state) => {
     return state.searchOptions;
   },
 };

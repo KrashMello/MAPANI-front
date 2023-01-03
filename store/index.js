@@ -10,6 +10,7 @@ import socket from "./socket";
 import employed from "./employed";
 import permissions from "./permissions";
 import sponsor from "./sponsor";
+import project from "./project";
 
 const createStore = () => {
   return new Vuex.Store({
@@ -26,6 +27,7 @@ const createStore = () => {
       employed : employed,
       permissions: permissions,
       sponsor: sponsor,
+      project: project,
     },
   });
 };

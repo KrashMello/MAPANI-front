@@ -9,100 +9,180 @@
             block
             rounded
             @click="
-              dialog.show = !dialog.show;
-              dialog.formAdd = true;
+              () => {
+                showForm = true;
+                formAdd = true;
+              }
             "
           >
-            Agendar Cita
+            Agregar proyecto
             <v-icon dark right>mdi-plus</v-icon>
           </v-btn>
         </v-col>
         <v-col cols="12" md="2">
-          <v-btn color="primary" rounded block dark>
+          <v-btn
+            color="primary"
+            rounded
+            block
+            dark
+            @click="showDrawer = !showDrawer"
+          >
             Buscar
             <v-icon dark right>mdi-magnify</v-icon>
           </v-btn>
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="12">
-          <v-card rounded="xl">
-            <v-card-text>
-              <!-- <v-simple-table dense> -->
-              <!--   <template #default> -->
-              <!--     <thead> -->
-              <!--       <tr> -->
-              <!--         <th class="text-left">Codigo</th> -->
-              <!--         <th class="text-left"> -->
-              <!--           Nombre y apellido del representante -->
-              <!--         </th> -->
-              <!--         <th class="text-left">Nombre y apellido del paciente</th> -->
-              <!--         <th class="text-left">Fecha pautada</th> -->
-              <!--         <th class="text-left">acciones</th> -->
-              <!--       </tr> -->
-              <!--     </thead> -->
-              <!--     <tbody> -->
-              <!--       <tr -->
-              <!--         v-for="item in appointment" -->
-              <!--         :key="item.code" -->
-              <!--         @mouseover="selectItem(item.code)" -->
-              <!--         @mouseleave="unSelectItem()" -->
-              <!--       > -->
-              <!--         <td>{{ item.code }}</td> -->
-              <!--         <td> -->
-              <!--           {{ item.representativeFirstName }} -->
-              <!--           {{ item.representativeLastName }} -->
-              <!--         </td> -->
-              <!--         <td> -->
-              <!--           {{ item.patientFirstName }} {{ item.patientLastName }} -->
-              <!--         </td> -->
-              <!--         <td>{{ item.appointmentDate }}</td> -->
-              <!--         <td> -->
-              <!--           <v-btn -->
-              <!--             v-if="selectedItemTable === item.code" -->
-              <!--             icon -->
-              <!--             small -->
-              <!--             color="warning" -->
-              <!--             @click="modifyAppointment(item)" -->
-              <!--           > -->
-              <!--             <v-icon>mdi-pencil</v-icon> -->
-              <!--           </v-btn> -->
-              <!--         </td> -->
-              <!--       </tr> -->
-              <!--     </tbody> -->
-              <!--   </template> -->
-              <!-- </v-simple-table> -->
-            </v-card-text>
+        <v-col :cols="tableCols">
+          <v-card class="overflow-hidden" rounded="xl">
+            <v-sheet class="overflow-y-auto" height="62vh" max-height="62vh">
+              <v-card-text>
+                <table-project @modify="modify" />
+              </v-card-text>
+            </v-sheet>
           </v-card>
+        </v-col>
+        <v-col cols="5">
+          <v-expand-transition>
+            <cards-forms
+              v-show="showForm"
+              :title="
+                formAdd === true
+                  ? `Agregar nuevo proyecto`
+                  : `Modificar proyecto ${project.code}`
+              "
+              @close="closeForm"
+            >
+              <template #form>
+                <forms-add-project
+                  :enabled="showForm"
+                  :is-aggregated="formAdd"
+                  @search="changeSearchDialog"
+                  @close="closeForm"
+                />
+              </template>
+            </cards-forms>
+          </v-expand-transition>
         </v-col>
       </v-row>
     </v-container>
-    <!-- <DialogForm -->
-    <!--   :title=" -->
-    <!--     dialog.formAdd === true -->
-    <!--       ? 'Agendar Nueva Cita' -->
-    <!--       : 'Modificar Cita ' + formData.code -->
-    <!--   " -->
-    <!--   :dialog="dialog.show" -->
-    <!--   @close="closeDialog" -->
-    <!-- > -->
-    <!--   <template #form> -->
-    <!--     <FormsAddMedicalAppoinment -->
-    <!--       :dialog-is-enable="dialog.show" -->
-    <!--       :is-aggregated="dialog.formAdd" -->
-    <!--       :form-data="formData" -->
-    <!--       @close="closeDialog" -->
-    <!--     ></FormsAddMedicalAppoinment> -->
-    <!--   </template> -->
-    <!-- </DialogForm> -->
+    <!-- dialog form -->
+    <Dialog-tables
+      title="Buscar sponsor"
+      :dialog="searchSponsorDialog"
+      @close="changeSearchDialog"
+    >
+      <template #table>
+        <table-search-sponsor-data @selected="changeSearchDialog" />
+      </template>
+    </Dialog-tables>
+
+    <!-- drawer for search  -->
+    <drawer-search
+      :show-drawer="showDrawer"
+      title="filtrar"
+      @close="closeDrawerSearch"
+    >
+      <template #form>
+        <forms-search-project @close="closeDrawerSearch" />
+      </template>
+    </drawer-search>
   </div>
 </template>
 
 <script>
+import { mapMutations, mapGetters } from "vuex";
 export default {
-  name: "projectPanel",
-  data() {
-    return {};
+  name: "ProyectosPanel",
+  data: () => {
+    return {
+      dialog: {
+        show: false,
+        formAdd: true,
+      },
+      showForm: false,
+      formAdd: true,
+      tableCols: 12,
+      showDrawer: false,
+      searchSponsorDialog: false,
+    };
+  },
+  computed: {
+    ...mapGetters({
+      project: "getProject",
+    }),
+  },
+  watch: {
+    showForm(val) {
+      if (!val)
+        setTimeout(() => {
+          this.tableCols = 12;
+        }, 300);
+      else this.tableCols = 7;
+    },
+  },
+  methods: {
+    ...mapMutations(["changePageTitle", "setProjects", "setProject"]),
+    closeForm(data) {
+      this.showForm = data.showForm;
+      this.setProject({
+        code: "",
+        name: "",
+        acronym: "",
+        startDate: "",
+        dueDate: "",
+        minYearsOld: "",
+        maxYearsOld: "",
+        fromDay: "",
+        toDay: "",
+        isJustOneDay: null,
+        sponsors: [],
+      });
+      if (data.resp)
+        this.$axios
+          .get("api/project", {
+            headers: {
+              "x-access-token": ` ${this.$cookies.get("x-access-token")}`,
+            },
+            params: {
+              code: "",
+              name: "",
+              acronym: "",
+              startDate: "",
+              dueDate: "",
+              minYearsOld: "",
+              maxYearsOld: "",
+              fromDay: "",
+              toDay: "",
+              isJustOneDay: null,
+              sponsors: [],
+            },
+          })
+          .then(async (resp) => {
+            this.setProjects(await resp.data);
+          });
+    },
+    changeSearchDialog(data) {
+      this.searchSponsorDialog = data;
+    },
+    closeDrawerSearch(data) {
+      this.showDrawer = data;
+    },
+    modify(data) {
+      if (!this.showForm) {
+        this.showForm = data.showForm;
+        this.formAdd = data.formAdd;
+      }
+    },
+    selectItem(i) {
+      this.selectedItemTable = i;
+    },
+    unSelectItem() {
+      this.selectedItemTable = null;
+    },
+  },
+  created() {
+    this.changePageTitle("Proyectos");
   },
 };
 </script>

@@ -3,31 +3,23 @@ import getters from "./getters";
 import mutations from "./mutations";
 
 const defaultState = {
-  projects: [],
-  projects: {
-    clinicHistoryCode: null,
-    representativeFirstName: "",
-    representativeLastName: "",
-    representativeNumberPhone: "",
-    representativeDirection: "",
-    patientFirstName: "",
-    patientLastName: "",
-    patientBornDate: "",
-    pediatrics: false,
-    nitritionist: false,
-    psychiatry: false,
-    socialPsychology: false,
-    breastfeedingAdvice: false,
-    advocacy: false,
-    clinicalPsychology: false,
-  },
-  appointmentSearchOptions: {
+  project: {
     code: "",
-    representativeFirstName: "",
-    representativeLastName: "",
-    patientFirstName: "",
-    patientLastName: "",
-    appointmentDate: "",
+    name: "",
+    acronym: "",
+    startDate: "",
+    dueDate: "",
+    minYearsOld: "",
+    maxYearsOld: "",
+    fromDay: "",
+    toDay: "",
+    isJustOneDay: null,
+    sponsors: [],
+  },
+  projects: [],
+  searchOptions: {
+    jobPositionCode: "",
+    departamentCode: "",
   },
 };
 

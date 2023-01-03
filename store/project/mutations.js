@@ -1,8 +1,8 @@
 export default {
-  setAppointment(state, appointment) {
-    state.appointment = appointment;
+  setProjects: (state, projects) => {
+    state.projects = projects;
   },
-  setAppointments(state, appointments) {
-    state.appointments = appointments;
+  setProject: (state, project) => {
+    state.project = project;
   },
 };
