@@ -132,9 +132,9 @@ export default {
     },
   },
   methods: {
-    ...mapMutations(["setSponsors", "setSponsor"]),
+    ...mapMutations(["setSponsors", "addSponsorsToProject"]),
     select(data) {
-      this.setSponsor(data);
+      this.addSponsorsToProject(data);
       this.$emit("selected", false);
     },
     filter() {

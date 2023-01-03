@@ -93,6 +93,59 @@
           </v-menu>
         </v-col>
       </v-row>
+      <v-card-title>Edad Minima</v-card-title>
+      <v-row>
+        <v-col cols="4">
+          <v-text-field v-model="data.minYear" label="años" outlined dense />
+        </v-col>
+        <v-col cols="4">
+          <v-text-field v-model="data.minMons" label="meses" outlined dense />
+        </v-col>
+        <v-col cols="4">
+          <v-text-field v-model="data.minDay" label="dias" outlined dense />
+        </v-col>
+      </v-row>
+      <v-card-title>Edad maxima</v-card-title>
+      <v-row>
+        <v-col cols="4">
+          <v-text-field v-model="data.maxYear" label="años" outlined dense />
+        </v-col>
+        <v-col cols="4">
+          <v-text-field v-model="data.maxMons" label="meses" outlined dense />
+        </v-col>
+        <v-col cols="4">
+          <v-text-field v-model="data.maxDay" label="dias" outlined dense />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="12">
+          <v-checkbox
+            v-model="data.isJustOneDay"
+            label="Solo un dia"
+            color="primary"
+            hide-details
+            dense
+          />
+        </v-col>
+        <v-col cols="12">
+          <v-select
+            v-model="data.fromDay"
+            label="desde"
+            :items="days"
+            item-value="code"
+            item-text="name"
+          />
+        </v-col>
+        <v-col cols="12" v-if="!data.isJustOneDay">
+          <v-select
+            v-model="data.toDay"
+            label="hasta"
+            :items="days"
+            item-value="code"
+            item-text="name"
+          />
+        </v-col>
+      </v-row>
       <v-card-title>Datos de sponsors</v-card-title>
       <v-card-title v-if="isAggregated">
         Buscar sponsor
@@ -111,10 +164,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr
-                v-for="item in data.sponsors"
-                :key="item.projectCode"
-              >
+              <tr v-for="item in data.sponsors" :key="item.projectCode">
                 <td>{{ item.code }}</td>
                 <td>{{ item.name }}</td>
               </tr>
@@ -162,6 +212,15 @@ export default {
         },
       },
     },
+    days: [
+      { code: 0, name: "Domingo" },
+      { code: 1, name: "Lunes" },
+      { code: 2, name: "Martes" },
+      { code: 3, name: "Miercoles" },
+      { code: 4, name: "Jueves" },
+      { code: 5, name: "Viernes" },
+      { code: 6, name: "Sabado" },
+    ],
     rules: {
       default: [(v) => !!v || "Este campo es obligatorio."],
       defaultText: [
@@ -212,10 +271,12 @@ export default {
                   acronym: this.data.acronym,
                   startDate: this.data.startDate,
                   dueDate: this.data.dueDate,
-                  minYearsOld: this.data.minYearsOld,
-                  maxYearsOld: this.data.maxYearsOld,
+                  minYearsOld: `${this.data.minyear} years ${this.data.minMons} mons ${this.data.minDay} days`,
+                  maxYearsOld: `${this.data.maxyear} years ${this.data.maxMons} mons ${this.data.maxDay} days`,
                   fromDay: this.data.fromDay,
-                  toDay: this.data.toDay,
+                  toDay: this.data.isJustOneDay
+                    ? this.data.fromDay
+                    : this.data.toDay,
                   isJustOneDay: this.data.isJustOneDay,
                 },
               },
