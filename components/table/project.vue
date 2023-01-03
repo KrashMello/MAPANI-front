@@ -63,11 +63,16 @@ export default {
         acronym: data.acronym,
         startDate: data.startDate,
         dueDate: data.dueDate,
-        minYearsOld: data.minYearsOld,
-        maxYearsOld: data.maxYearsOld,
+        minYear: data.minYearsOld.slice(0, -20),
+        minMons: data.minYearsOld.slice(8, -12),
+        minDay: data.minYearsOld.slice(15, -5),
+        maxYear: data.maxYearsOld.slice(0, -20),
+        maxMons: data.maxYearsOld.slice(8, -12),
+        maxDay: data.maxYearsOld.slice(15, -5),
         fromDay: data.fromDay,
         toDay: data.toDay,
         isJustOneDay: data.isJustOneDay,
+        sponsors: data.sponsors,
       };
       this.setProject(projectData);
       this.$emit("modify", { showForm: true, formAdd: false });

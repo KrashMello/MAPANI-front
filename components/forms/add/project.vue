@@ -93,35 +93,35 @@
           </v-menu>
         </v-col>
       </v-row>
-      <v-card-title>Edad Minima</v-card-title>
+      <v-card-title>Edad minima</v-card-title>
       <v-row>
         <v-col cols="4">
-          <v-text-field v-model="data.minYear" label="años" outlined dense />
+          <v-text-field v-model="data.minYear" label="Años" outlined dense />
         </v-col>
         <v-col cols="4">
-          <v-text-field v-model="data.minMons" label="meses" outlined dense />
+          <v-text-field v-model="data.minMons" label="Meses" outlined dense />
         </v-col>
         <v-col cols="4">
-          <v-text-field v-model="data.minDay" label="dias" outlined dense />
+          <v-text-field v-model="data.minDay" label="Días" outlined dense />
         </v-col>
       </v-row>
       <v-card-title>Edad maxima</v-card-title>
       <v-row>
         <v-col cols="4">
-          <v-text-field v-model="data.maxYear" label="años" outlined dense />
+          <v-text-field v-model="data.maxYear" label="Años" outlined dense />
         </v-col>
         <v-col cols="4">
-          <v-text-field v-model="data.maxMons" label="meses" outlined dense />
+          <v-text-field v-model="data.maxMons" label="Meses" outlined dense />
         </v-col>
         <v-col cols="4">
-          <v-text-field v-model="data.maxDay" label="dias" outlined dense />
+          <v-text-field v-model="data.maxDay" label="Días" outlined dense />
         </v-col>
       </v-row>
       <v-row>
         <v-col cols="12">
           <v-checkbox
             v-model="data.isJustOneDay"
-            label="Solo un dia"
+            label="Solo un día"
             color="primary"
             hide-details
             dense
@@ -130,19 +130,23 @@
         <v-col cols="12">
           <v-select
             v-model="data.fromDay"
-            label="desde"
+            label="Desde"
             :items="days"
             item-value="code"
             item-text="name"
+            outlined
+            dense
           />
         </v-col>
         <v-col cols="12" v-if="!data.isJustOneDay">
           <v-select
             v-model="data.toDay"
-            label="hasta"
+            label="Hasta"
             :items="days"
             item-value="code"
             item-text="name"
+            outlined
+            dense
           />
         </v-col>
       </v-row>
@@ -156,17 +160,23 @@
       </v-card-title>
       <v-row>
         <v-col cols="12">
-          <v-simple-table dense>
+          <v-simple-table>
             <thead>
               <tr>
                 <th class="text-left">Rif</th>
                 <th class="text-left">Nombre</th>
+                <th class="text-left">Eliminar</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="item in data.sponsors" :key="item.projectCode">
+              <tr v-for="item in data.sponsors" :key="item.code">
                 <td>{{ item.code }}</td>
                 <td>{{ item.name }}</td>
+                <td>
+                  <v-btn fab x-small color="error" @click="deleteSponsor(item)">
+                    <v-icon small> mdi-delete </v-icon>
+                  </v-btn>
+                </td>
               </tr>
             </tbody>
           </v-simple-table>
@@ -203,6 +213,9 @@ export default {
   data: () => ({
     valid: true,
     disabledButtom: false,
+    menuDateOfEntry: false,
+    menuDateOfDischarge: false,
+    activePicker: null,
     upperCaseMask: {
       mask: "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU",
       tokens: {
@@ -256,9 +269,18 @@ export default {
         this.panel = 1;
       }
     },
+    menuDateOfEntry(val) {
+      val && setTimeout(() => (this.activePicker = "YEAR"));
+    },
+    menuDateOfDischarge(val) {
+      val && setTimeout(() => (this.activePicker = "YEAR"));
+    },
   },
   methods: {
-    ...mapMutations(["setProject"]),
+    ...mapMutations(["deleteSponsorsToProject"]),
+    deleteSponsor(data) {
+      this.deleteSponsorsToProject(data.code);
+    },
     submit() {
       if (this.isAggregated) {
         (this.disabledButtom = true),
@@ -271,13 +293,14 @@ export default {
                   acronym: this.data.acronym,
                   startDate: this.data.startDate,
                   dueDate: this.data.dueDate,
-                  minYearsOld: `${this.data.minyear} years ${this.data.minMons} mons ${this.data.minDay} days`,
-                  maxYearsOld: `${this.data.maxyear} years ${this.data.maxMons} mons ${this.data.maxDay} days`,
+                  minYearsOld: `${this.data.minYear} years ${this.data.minMons} mons ${this.data.minDay} days`,
+                  maxYearsOld: `${this.data.maxYear} years ${this.data.maxMons} mons ${this.data.maxDay} days`,
                   fromDay: this.data.fromDay,
                   toDay: this.data.isJustOneDay
                     ? this.data.fromDay
                     : this.data.toDay,
                   isJustOneDay: this.data.isJustOneDay,
+                  sponsors: this.data.sponsors,
                 },
               },
               {
@@ -305,11 +328,14 @@ export default {
                   acronym: this.data.acronym,
                   startDate: this.data.startDate,
                   dueDate: this.data.dueDate,
-                  minYearsOld: this.data.minYearsOld,
-                  maxYearsOld: this.data.maxYearsOld,
+                  minYearsOld: `${this.data.minYear} years ${this.data.minMons} mons ${this.data.minDay} days`,
+                  maxYearsOld: `${this.data.maxYear} years ${this.data.maxMons} mons ${this.data.maxDay} days`,
                   fromDay: this.data.fromDay,
-                  toDay: this.data.toDay,
+                  toDay: this.data.isJustOneDay
+                    ? this.data.fromDay
+                    : this.data.toDay,
                   isJustOneDay: this.data.isJustOneDay,
+                  sponsors: this.data.sponsors,
                 },
               },
               {
@@ -332,6 +358,12 @@ export default {
     },
     cancel() {
       this.$emit("cancel", false);
+    },
+    saveDateOfEntry(date) {
+      this.$refs.menuDateOfEntry.save(date);
+    },
+    saveDateOfDicharge(date) {
+      this.$refs.menuDateOfDischarge.save(date);
     },
   },
 };

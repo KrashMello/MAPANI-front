@@ -359,7 +359,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from "vuex";
+import { mapGetters } from "vuex";
 export default {
   name: "formEmployed",
   props: {
@@ -464,13 +464,11 @@ export default {
     menuDateOfEntry(val) {
       val && setTimeout(() => (this.activePicker = "YEAR"));
     },
-
     menuDateOfDischarge(val) {
       val && setTimeout(() => (this.activePicker = "YEAR"));
     },
   },
   methods: {
-    ...mapMutations(["setEmployed", "setUserPersonalData"]),
     submit() {
       const re = /[()-]/gm;
       const phoneNumber = this.personalData.phoneNumber.replace(re, "");
@@ -617,7 +615,6 @@ export default {
     saveDateOfEntry(date) {
       this.$refs.menuDateOfEntry.save(date);
     },
-
     saveDateOfDicharge(date) {
       this.$refs.menuDateOfDischarge.save(date);
     },

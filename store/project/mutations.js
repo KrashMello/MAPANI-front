@@ -11,4 +11,9 @@ export default {
     )
       state.project.sponsors.push(sponsor);
   },
+  deleteSponsorsToProject: (state, code) => {
+    state.project.sponsors = state.project.sponsors.filter(
+      (v) => v.code !== code
+    );
+  },
 };
