@@ -1,7 +1,7 @@
 <template>
   <v-form v-model="valid" ref="form" @submit.prevent="submit">
     <v-container class="mt-3">
-      <v-card-title>
+      <v-card-title v-if="isAggregated">
         Buscar historia clinical
         <v-spacer></v-spacer>
         <v-btn color="primary" fab small elevation="0">
@@ -96,8 +96,9 @@
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
                 v-model="data.patientBornDate"
-                label="Birthday date"
-                prepend-icon="mdi-calendar"
+                outlined
+                label="Fecha de nacimiento"
+                prepend-inner-icon="mdi-calendar"
                 readonly
                 dense
                 :rules="rules.default"
@@ -197,9 +198,6 @@
       </v-row>
       <v-divider class="my-2"></v-divider>
       <v-row justify="end">
-        <!-- <v-col cols="12" md="5" v-if="inDialog">
-          <v-btn block dark color="secondary">Cancelar</v-btn>
-        </v-col> -->
         <v-col cols="12" md="5">
           <v-btn block :disabled="!valid" color="primary" type="submit">
             {{ data.code ? "Editar" : "Guardar" }}
@@ -211,36 +209,16 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from "vuex";
+import { mapGetters } from "vuex";
 
 export default {
-  name: "formAddMedicalAppointment",
+  name: "formAppointment",
   props: {
-    dialogIsEnable: {
+    enabled: {
       type: Boolean,
       default: false,
     },
     isAggregated: { type: Boolean, default: false },
-  },
-  watch: {
-    dialogIsEnable(newVal) {
-      if (newVal === false) {
-        this.$refs.form.reset();
-        this.panel = 1;
-      }
-    },
-    menu(val) {
-      val && setTimeout(() => (this.activePicker = "YEAR"));
-    },
-    allOption(val) {
-      this.data.pediatrics = val;
-      this.data.socialPsychology = val;
-      this.data.breastfeedingAdvice = val;
-      this.data.nutritionist = val;
-      this.data.psychiatry = val;
-      this.data.advocacy = val;
-      this.data.clinicalPsychology = val;
-    },
   },
   data: () => ({
     panel: 1,
@@ -285,8 +263,32 @@ export default {
       return this.appointment;
     },
   },
+  watch: {
+    enabled(val) {
+      if (!val) {
+        this.$refs.form.reset();
+      }
+    },
+    dialogIsEnable(newVal) {
+      if (newVal === false) {
+        this.$refs.form.reset();
+        this.panel = 1;
+      }
+    },
+    menu(val) {
+      val && setTimeout(() => (this.activePicker = "YEAR"));
+    },
+    allOption(val) {
+      this.data.pediatrics = val;
+      this.data.socialPsychology = val;
+      this.data.breastfeedingAdvice = val;
+      this.data.nutritionist = val;
+      this.data.psychiatry = val;
+      this.data.advocacy = val;
+      this.data.clinicalPsychology = val;
+    },
+  },
   methods: {
-    ...mapMutations(["setAppointment"]),
     submit() {
       const re = /[()-]/gm;
       const numberPhone = this.data.representativeNumberPhone.replace(re, "");
@@ -319,48 +321,39 @@ export default {
           });
       } else {
         this.$axios
-          .put("api/appointment", {
-            params: {
-              code: this.data.code,
-              projectCode: this.data.projectCode,
-              appointmentDate: this.data.appointmentDate,
-              pediatrics: this.data.pediatrics,
-              nutritionist: this.data.nutritionist,
-              psychiatry: this.data.psychiatry,
-              breastfeedingAdvice: this.data.breastfeedingAdvice,
-              advocacy: this.data.advocacy,
-              socialPsychology: this.data.socialPsychology,
-              clinicalPsychology: this.data.clinicalPsychology,
-              clinicHistoryCode: this.data.clinicHistoryCode,
-              representativeFirstName: this.data.representativeFirstName,
-              representativeLastName: this.data.representativeLastName,
-              representativeNumberPhone: numberPhone,
-              representativeDirection: this.data.representativeDirection,
-              patientFirstName: this.data.patientFirstName,
-              patientLastName: this.data.patientLastName,
-              patientBornDate: this.data.patientBornDate,
-              status: 0,
+          .put(
+            "api/appointment",
+            {
+              params: {
+                code: this.data.code,
+                projectCode: this.data.projectCode,
+                appointmentDate: this.data.appointmentDate,
+                pediatrics: this.data.pediatrics,
+                nutritionist: this.data.nutritionist,
+                psychiatry: this.data.psychiatry,
+                breastfeedingAdvice: this.data.breastfeedingAdvice,
+                advocacy: this.data.advocacy,
+                socialPsychology: this.data.socialPsychology,
+                clinicalPsychology: this.data.clinicalPsychology,
+                clinicHistoryCode: this.data.clinicHistoryCode,
+                representativeFirstName: this.data.representativeFirstName,
+                representativeLastName: this.data.representativeLastName,
+                representativeNumberPhone: numberPhone,
+                representativeDirection: this.data.representativeDirection,
+                patientFirstName: this.data.patientFirstName,
+                patientLastName: this.data.patientLastName,
+                patientBornDate: this.data.patientBornDate,
+                status: 0,
+              },
             },
-          })
-          .then(() => {
-            this.$emit("close", false);
-            this.setAppointment({
-              representativeFirstName: "",
-              representativeLastName: "",
-              representativeNumberPhone: "",
-              representativeDirection: "",
-              patientFirstName: "",
-              patientLastName: "",
-              patientBornDate: "",
-              pediatrics: false,
-              nitritionist: false,
-              psychiatry: false,
-              socialPsychology: false,
-              clinicalPsychology: false,
-              breastfeedingAdvice: false,
-              advocacy: false,
-              clinicHistoryCode: null,
-            });
+            {
+              headers: {
+                "x-access-token": `${this.$cookies.get("x-access-token")}`,
+              },
+            }
+          )
+          .then((resp) => {
+            this.$emit("close", { showForm: false, resp });
           })
           .catch((err) => {
             console.log(err);

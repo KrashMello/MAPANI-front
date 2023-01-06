@@ -5,6 +5,9 @@ import mutations from "./mutations";
 const defaultState = {
   appointments: [],
   appointment: {
+    code: "",
+    projectCode: "",
+    appointmentDate: "",
     clinicHistoryCode: null,
     representativeFirstName: "",
     representativeLastName: "",
@@ -14,7 +17,7 @@ const defaultState = {
     patientLastName: "",
     patientBornDate: "",
     pediatrics: false,
-    nitritionist: false,
+    nutritionist: false,
     psychiatry: false,
     socialPsychology: false,
     breastfeedingAdvice: false,

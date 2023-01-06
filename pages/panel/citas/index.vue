@@ -9,11 +9,13 @@
             block
             rounded
             @click="
-              dialog.show = !dialog.show;
-              dialog.formAdd = true;
+              () => {
+                showForm = true;
+                formAdd = true;
+              }
             "
           >
-            Agendar Cita
+            Agregar cita
             <v-icon dark right>mdi-plus</v-icon>
           </v-btn>
         </v-col>
@@ -31,84 +33,47 @@
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="12">
-          <v-card rounded="xl">
-            <v-card-text>
-              <v-simple-table dense>
-                <template #default>
-                  <thead>
-                    <tr>
-                      <th class="text-left">Codigo</th>
-                      <th class="text-left">
-                        Nombre y apellido del representante
-                      </th>
-                      <th class="text-left">Nombre y apellido del paciente</th>
-                      <th class="text-left">Fecha pautada</th>
-                      <th class="text-left">acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr
-                      v-for="item in appointments"
-                      :key="item.code"
-                      @mouseover="selectItem(item.code)"
-                      @mouseleave="unSelectItem()"
-                    >
-                      <td>{{ item.code }}</td>
-                      <td>
-                        {{ item.representativeFirstName }}
-                        {{ item.representativeLastName }}
-                      </td>
-                      <td>
-                        {{ item.patientFirstName }} {{ item.patientLastName }}
-                      </td>
-                      <td>{{ item.appointmentDate }}</td>
-                      <td>
-                        <v-btn
-                          v-if="selectedItemTable === item.code"
-                          icon
-                          small
-                          color="warning"
-                          @click="modifyAppointment(item)"
-                        >
-                          <v-icon>mdi-pencil</v-icon>
-                        </v-btn>
-                      </td>
-                    </tr>
-                  </tbody>
-                </template>
-              </v-simple-table>
-            </v-card-text>
+        <v-col :cols="tableCols">
+          <v-card class="overflow-hidden" rounded="xl">
+            <v-sheet class="overflow-y-auto" height="62vh" max-height="62vh">
+              <v-card-text>
+                <table-appointment @modify="modify" />
+              </v-card-text>
+            </v-sheet>
           </v-card>
+        </v-col>
+        <v-col cols="5">
+          <v-expand-transition>
+            <cards-forms
+              v-show="showForm"
+              :title="
+                formAdd === true
+                  ? `Agregar nueva cita`
+                  : `Modificar cita ${appointment.code}`
+              "
+              @close="closeForm"
+            >
+              <template #form>
+                <forms-add-appointment
+                  :enabled="showForm"
+                  :is-aggregated="formAdd"
+                  @close="closeForm"
+                />
+              </template>
+            </cards-forms>
+          </v-expand-transition>
         </v-col>
       </v-row>
     </v-container>
-      <!-- dialog form -->
-    <DialogForm
-      :title="
-        dialog.formAdd === true
-          ? `Agendar Nueva Cita`
-          : `Modificar Cita ${appointment.code}`
-      "
-      :dialog="dialog.show"
-      @close="closeDialog"
-    >
-      <template #form>
-        <FormsAddMedicalAppoinment
-          :dialog-is-enable="dialog.show"
-          :is-aggregated="dialog.formAdd"
-          @close="closeDialog"
-        ></FormsAddMedicalAppoinment>
-      </template>
-    </DialogForm>
-    <!-- drawer for search  -->
     <drawer-search
       :show-drawer="showDrawer"
       title="Filtrar"
       @close="closeDrawerSearch"
     >
       <template #form>
-        <forms-search-appointment></forms-search-appointment>
+        <forms-search-appointment
+          @close="closeDrawerSearch"
+        ></forms-search-appointment>
       </template>
     </drawer-search>
   </div>
@@ -117,46 +82,37 @@
 import { mapGetters, mapMutations } from "vuex";
 export default {
   name: "citasPanel",
-  data() {
+  data: () => {
     return {
       dialog: {
         show: false,
         formAdd: true,
       },
-      selectedItemTable: null,
+      showForm: false,
+      formAdd: true,
+      tableCols: 12,
       showDrawer: false,
-      activePicker: null,
-      headers: [
-        { text: "Nacionalidad", value: "documentType", sortable: false },
-        { text: "Cedula", value: "DNI" },
-        { text: "Nombres", value: "firstName", sortable: false },
-        { text: "Apellidos", value: "lastName", sortable: false },
-        { text: "Correo", value: "email", sortable: false },
-        { text: "Opciones", value: "actions", sortable: false },
-      ],
     };
-  },
-  watch: {
-    menu(val) {
-      val && setTimeout(() => (this.activePicker = "YEAR"));
-    },
   },
   computed: {
     ...mapGetters({
-      socket: "socket",
-      appointments: "getAppointments",
       appointment: "getAppointment",
     }),
   },
+  watch: {
+    showForm(val) {
+      if (!val)
+        setTimeout(() => {
+          this.tableCols = 12;
+        }, 300);
+      else this.tableCols = 7;
+    },
+  },
+
   methods: {
-    ...mapMutations([
-      "changePageTitle",
-      "setSocket",
-      "setAppointments",
-      "setAppointment",
-    ]),
-    closeDialog(data) {
-      this.dialog.show = data;
+    ...mapMutations(["changePageTitle", "setAppointments", "setAppointment"]),
+    closeForm(data) {
+      this.showForm = data.showForm;
       this.setAppointment({
         clinicHistoryCode: null,
         representativeFirstName: "",
@@ -174,14 +130,42 @@ export default {
         advocacy: false,
         clinicalPsychology: false,
       });
+      if (data.resp)
+        this.$axios
+          .get("api/appointment", {
+            headers: {
+              "x-access-token": ` ${this.$cookies.get("x-access-token")}`,
+            },
+            params: {
+              clinicHistoryCode: null,
+              representativeFirstName: "",
+              representativeLastName: "",
+              representativeNumberPhone: "",
+              representativeDirection: "",
+              patientFirstName: "",
+              patientLastName: "",
+              patientBornDate: "",
+              pediatrics: false,
+              nitritionist: false,
+              psychiatry: false,
+              socialPsychology: false,
+              breastfeedingAdvice: false,
+              advocacy: false,
+              clinicalPsychology: false,
+            },
+          })
+          .then(async (resp) => {
+            this.setAppointments(await resp.data);
+          });
     },
     closeDrawerSearch(data) {
       this.showDrawer = data;
     },
-    modifyAppointment(appointment) {
-      this.setAppointment(appointment);
-      this.dialog.show = !this.dialog.show;
-      this.dialog.formAdd = false;
+    modify(data) {
+      if (!this.showForm) {
+        this.showForm = data.showForm;
+        this.formAdd = data.formAdd;
+      }
     },
     selectItem(i) {
       this.selectedItemTable = i;
@@ -193,19 +177,5 @@ export default {
   created() {
     this.changePageTitle("Citas");
   },
-  mounted() {
-    this.socket.on("getAppointments", async (resp) => {
-      this.setAppointments(await resp.rows);
-    });
-  },
 };
 </script>
-<style lang="scss" scoped>
-tr > .actionButtons {
-  display: none;
-}
-
-tr:hover > .actionButtons {
-  display: block;
-}
-</style>

@@ -47,8 +47,9 @@
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
                 v-model="data.dateOfEntry"
+                outlined
                 label="Fecha de ingreso"
-                prepend-icon="mdi-calendar"
+                prepend-inner-icon="mdi-calendar"
                 readonly
                 dense
                 :rules="rules.default"
@@ -81,8 +82,9 @@
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
                 v-model="data.dateOfDischarge"
+                outlined
                 label="Fecha de egreso"
-                prepend-icon="mdi-calendar"
+                prepend-inner-icon="mdi-calendar"
                 readonly
                 dense
                 v-bind="attrs"
@@ -182,8 +184,9 @@
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
                 v-model="personalData.bornDate"
+                outlined
                 label="Fecha de nacimiento"
-                prepend-icon="mdi-calendar"
+                prepend-inner-icon="mdi-calendar"
                 readonly
                 dense
                 :disabled="personalData.code !== '' ? true : false"
@@ -345,9 +348,6 @@
       </v-row>
       <v-divider class="my-2"></v-divider>
       <v-row justify="end">
-        <!-- <v-col cols="12" md="5" v-if="inDialog">
-          <v-btn block dark color="secondary">Cancelar</v-btn>
-        </v-col> -->
         <v-col cols="12" md="5">
           <v-btn block :disabled="!valid" color="primary" type="submit">
             {{ data.code ? "Editar" : "Guardar" }}
@@ -429,7 +429,6 @@ export default {
       employed: "getEmployed",
       userPersonalData: "getUserPersonalData",
     }),
-
     data() {
       return this.employed;
     },
@@ -451,7 +450,6 @@ export default {
         this.chargeParrish();
       }
     },
- 
     dialogIsEnable(newVal) {
       if (newVal === false) {
         this.$refs.form.reset();
