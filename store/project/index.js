@@ -18,8 +18,14 @@ const defaultState = {
   },
   projects: [],
   searchOptions: {
-    jobPositionCode: "",
-    departamentCode: "",
+    name: "",
+    acronym: "",
+    startDate: "",
+    dueDate: "",
+    minYearsOld: "",
+    maxYearsOld: "",
+    fromDay: "",
+    toDay: "",
   },
 };
 

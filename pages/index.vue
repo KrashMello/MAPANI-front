@@ -21,7 +21,7 @@ export default {
   layout: "simple",
   computed: {
     ...mapGetters({
-      loading: "getLoadingLogin",
+      loading: "getLoading",
     }),
   },
 };

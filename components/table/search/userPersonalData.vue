@@ -1,7 +1,6 @@
 <template>
   <div>
     <v-card flat>
-      <v-card-title><v-icon>mdi-filter</v-icon> Filtrar Datos</v-card-title>
       <v-card-text>
         <v-container>
           <v-row>

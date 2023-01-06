@@ -3,7 +3,7 @@ import getters from "./getters";
 import mutations from "./mutations";
 
 const defaultState = {
-  loadingLogin: false,
+  loading: false,
   pageTitle: "Inicio",
   status: { code: 0, message: "" },
   responseSnackbar: { code: 0, type: "", message: "" },

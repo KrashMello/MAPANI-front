@@ -151,7 +151,7 @@
         </v-col>
       </v-row>
       <v-card-title>Datos de sponsors</v-card-title>
-      <v-card-title v-if="isAggregated">
+      <v-card-title>
         Buscar sponsor
         <v-spacer></v-spacer>
         <v-btn color="primary" fab small elevation="0" @click="search">
@@ -170,9 +170,9 @@
             </thead>
             <tbody>
               <tr v-for="item in data.sponsors" :key="item.code">
-                <td>{{ item.code }}</td>
-                <td>{{ item.name }}</td>
-                <td>
+                <td v-if="!item.delete">{{ item.code }}</td>
+                <td v-if="!item.delete">{{ item.name }}</td>
+                <td v-if="!item.delete">
                   <v-btn fab x-small color="error" @click="deleteSponsor(item)">
                     <v-icon small> mdi-delete </v-icon>
                   </v-btn>
@@ -226,13 +226,13 @@ export default {
       },
     },
     days: [
-      { code: 0, name: "Domingo" },
-      { code: 1, name: "Lunes" },
-      { code: 2, name: "Martes" },
-      { code: 3, name: "Miercoles" },
-      { code: 4, name: "Jueves" },
-      { code: 5, name: "Viernes" },
-      { code: 6, name: "Sabado" },
+      { code: "0", name: "Domingo" },
+      { code: "1", name: "Lunes" },
+      { code: "2", name: "Martes" },
+      { code: "3", name: "Miercoles" },
+      { code: "4", name: "Jueves" },
+      { code: "5", name: "Viernes" },
+      { code: "6", name: "Sabado" },
     ],
     rules: {
       default: [(v) => !!v || "Este campo es obligatorio."],
@@ -277,80 +277,93 @@ export default {
     },
   },
   methods: {
-    ...mapMutations(["deleteSponsorsToProject"]),
+    ...mapMutations([
+      "deleteSponsorsToProject",
+      "changeDeleteSponsors",
+      "changeLoading",
+    ]),
     deleteSponsor(data) {
-      this.deleteSponsorsToProject(data.code);
+      if (this.isAggregated) this.deleteSponsorsToProject(data);
+      else this.changeDeleteSponsors([data, true]);
     },
     submit() {
       if (this.isAggregated) {
-        (this.disabledButtom = true),
-          this.$axios
-            .post(
-              "api/project",
-              {
-                params: {
-                  name: this.data.name,
-                  acronym: this.data.acronym,
-                  startDate: this.data.startDate,
-                  dueDate: this.data.dueDate,
-                  minYearsOld: `${this.data.minYear} years ${this.data.minMons} mons ${this.data.minDay} days`,
-                  maxYearsOld: `${this.data.maxYear} years ${this.data.maxMons} mons ${this.data.maxDay} days`,
-                  fromDay: this.data.fromDay,
-                  toDay: this.data.isJustOneDay
-                    ? this.data.fromDay
-                    : this.data.toDay,
-                  isJustOneDay: this.data.isJustOneDay,
-                  sponsors: this.data.sponsors,
-                },
+        this.disabledButtom = true;
+        this.changeLoading(true);
+        this.$axios
+          .post(
+            "api/project",
+            {
+              params: {
+                name: this.data.name,
+                acronym: this.data.acronym,
+                startDate: this.data.startDate,
+                dueDate: this.data.dueDate,
+                minYearsOld: `${this.data.minYear} years ${this.data.minMons} mons ${this.data.minDay} days`,
+                maxYearsOld: `${this.data.maxYear} years ${this.data.maxMons} mons ${this.data.maxDay} days`,
+                fromDay: this.data.fromDay,
+                toDay: this.data.isJustOneDay
+                  ? this.data.fromDay
+                  : this.data.toDay,
+                isJustOneDay: this.data.isJustOneDay,
+                sponsors: this.data.sponsors,
               },
-              {
-                headers: {
-                  "x-access-token": `${this.$cookies.get("x-access-token")}`,
-                },
-              }
-            )
-            .then((resp) => {
-              (this.disabledButtom = false),
-                this.$emit("close", { showForm: false, resp });
-            })
-            .catch((err) => {
-              (this.disabledButtom = false), console.log(err);
-            });
+            },
+            {
+              headers: {
+                "x-access-token": `${this.$cookies.get("x-access-token")}`,
+              },
+            }
+          )
+          .then((resp) => {
+            this.disabledButtom = false;
+            this.changeLoading(false);
+            this.$emit("close", { showForm: false, resp });
+          })
+          .catch((err) => {
+            this.disabledButtom = false;
+            this.changeLoading(false);
+            console.log(err);
+          });
       } else {
-        (this.disabledButtom = true),
-          this.$axios
-            .put(
-              "api/project",
-              {
-                params: {
-                  code: this.data.code,
-                  name: this.data.name,
-                  acronym: this.data.acronym,
-                  startDate: this.data.startDate,
-                  dueDate: this.data.dueDate,
-                  minYearsOld: `${this.data.minYear} years ${this.data.minMons} mons ${this.data.minDay} days`,
-                  maxYearsOld: `${this.data.maxYear} years ${this.data.maxMons} mons ${this.data.maxDay} days`,
-                  fromDay: this.data.fromDay,
-                  toDay: this.data.isJustOneDay
-                    ? this.data.fromDay
-                    : this.data.toDay,
-                  isJustOneDay: this.data.isJustOneDay,
-                  sponsors: this.data.sponsors,
-                },
+        this.disabledButtom = true;
+        this.changeLoading(true);
+        this.$axios
+          .put(
+            "api/project",
+            {
+              params: {
+                code: this.data.code,
+                name: this.data.name,
+                acronym: this.data.acronym,
+                startDate: this.data.startDate,
+                dueDate: this.data.dueDate,
+                minYearsOld: `${this.data.minYear} years ${this.data.minMons} mons ${this.data.minDay} days`,
+                maxYearsOld: `${this.data.maxYear} years ${this.data.maxMons} mons ${this.data.maxDay} days`,
+                fromDay: this.data.fromDay,
+                toDay: this.data.isJustOneDay
+                  ? this.data.fromDay
+                  : this.data.toDay,
+                isJustOneDay: this.data.isJustOneDay,
+                sponsors: this.data.sponsors,
               },
-              {
-                headers: {
-                  "x-access-token": `${this.$cookies.get("x-access-token")}`,
-                },
-              }
-            )
-            .then((resp) => {
-              (this.disabledButtom = false),
-                this.$emit("close", { showForm: false, resp });
-            })
-            .catch((err) => {
-              (this.disabledButtom = false), console.log(err);
-            });
+            },
+            {
+              headers: {
+                "x-access-token": `${this.$cookies.get("x-access-token")}`,
+              },
+            }
+          )
+          .then((resp) => {
+            this.disabledButtom = false;
+            this.changeLoading(false);
+            this.$emit("close", { showForm: false, resp });
+          })
+          .catch((err) => {
+            this.disabledButtom = false;
+            this.changeLoading(false);
+            console.log(err);
+          });
       }
     },
     search() {

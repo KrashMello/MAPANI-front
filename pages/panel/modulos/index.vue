@@ -82,7 +82,7 @@
     <!-- drawer for search -->
     <drawer-search
       :show-drawer="showDrawer"
-      title="filtrar"
+      title="Filtrar"
       @close="closeDrawerSearch"
     >
       <template #form>

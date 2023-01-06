@@ -73,14 +73,14 @@
       @close="changeSearchDialog"
     >
       <template #table>
-        <table-search-sponsor-data @selected="changeSearchDialog" />
+        <table-search-sponsor-data @selected="changeSearchDialog" :is-aggregated="formAdd" />
       </template>
     </Dialog-tables>
 
     <!-- drawer for search  -->
     <drawer-search
       :show-drawer="showDrawer"
-      title="filtrar"
+      title="Filtrar"
       @close="closeDrawerSearch"
     >
       <template #form>

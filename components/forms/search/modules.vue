@@ -46,7 +46,7 @@
       </v-col>
     </v-row>
     <div class="pa-2">
-      <v-btn class="pa-2" block color="primary" @click="search">Filtrar</v-btn>
+      <v-btn class="pa-2" block rounded color="primary" @click="search">Filtrar</v-btn>
     </div>
   </v-container>
 </template>

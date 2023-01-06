@@ -1,6 +1,6 @@
 export default {
-  getLoadingLogin(state) {
-    return state.loadingLogin;
+  getLoading(state) {
+    return state.loading;
   },
   getPageTitle(state) {
     return state.pageTitle;

@@ -1,5 +1,5 @@
 <template>
-  <v-card class="overflow-hidden" rounded="xl">
+  <v-card :loading="loading" class="overflow-hidden" rounded="xl">
     <v-app-bar
       absolute
       dark
@@ -33,6 +33,7 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 export default {
   name: "formDialogTemplate",
   props: {
@@ -49,6 +50,9 @@ export default {
     return {};
   },
   computed: {
+    ...mapGetters({
+      loading: "getLoading",
+    }),
     cDialog() {
       return this.dialog;
     },

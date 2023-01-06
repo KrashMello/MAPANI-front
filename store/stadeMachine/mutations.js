@@ -1,6 +1,6 @@
 export default {
-  changeLoadingState(state, stade) {
-    state.loadingLogin = stade;
+  changeLoading(state, stade) {
+    state.loading = stade;
   },
   changePageTitle(state, title) {
     state.pageTitle = title;

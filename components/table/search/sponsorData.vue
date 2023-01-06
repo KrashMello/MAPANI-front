@@ -93,6 +93,9 @@
 import { mapGetters, mapMutations } from "vuex";
 export default {
   name: "sponsorDataSearchTable",
+  props: {
+    isAggregated: { type: Boolean, default: false },
+  },
   data() {
     return {
       selectedItemTable: null,
@@ -132,9 +135,13 @@ export default {
     },
   },
   methods: {
-    ...mapMutations(["setSponsors", "addSponsorsToProject"]),
+    ...mapMutations(["setSponsors", "addSponsorsToProject", "changeDeleteSponsors"]),
     select(data) {
-      this.addSponsorsToProject(data);
+      if (this.isAggregated) 
+        this.addSponsorsToProject(data);
+      else 
+        this.changeDeleteSponsors([data, false]);
+      
       this.$emit("selected", false);
     },
     filter() {
