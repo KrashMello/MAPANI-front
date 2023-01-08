@@ -561,7 +561,6 @@ export default {
         })
         .then((response) => {
           this.stades = response.data;
-          // console.log(response.data)
         })
         .catch((err) => {
           console.log(err);
@@ -578,7 +577,6 @@ export default {
         })
         .then((response) => {
           this.municipality = response.data;
-          // console.log(response.data)
         })
         .catch((err) => {
           console.log(err);
@@ -595,7 +593,6 @@ export default {
         })
         .then((response) => {
           this.parrish = response.data;
-          // console.log(response.data)
         })
         .catch((err) => {
           console.log(err);
@@ -639,7 +636,6 @@ export default {
       })
       .then((response) => {
         this.departaments = response.data;
-        // console.log(response.data)
       })
       .catch((err) => {
         console.log(err);
@@ -652,7 +648,6 @@ export default {
       })
       .then((response) => {
         this.genders = response.data;
-        // console.log(response.data)
       })
       .catch((err) => {
         console.log(err);
@@ -665,7 +660,6 @@ export default {
       })
       .then((response) => {
         this.martialStatus = response.data;
-        // console.log(response.data)
       })
       .catch((err) => {
         console.log(err);
@@ -679,7 +673,6 @@ export default {
       })
       .then((response) => {
         this.documentTypes = response.data;
-        // console.log(response.data)
       })
       .catch((err) => {
         console.log(err);
@@ -693,7 +686,6 @@ export default {
       })
       .then((response) => {
         this.disabilitys = response.data;
-        // console.log(response.data)
       })
       .catch((err) => {
         console.log(err);
@@ -707,7 +699,6 @@ export default {
       })
       .then((response) => {
         this.regions = response.data;
-        // console.log(response.data)
       })
       .catch((err) => {
         console.log(err);

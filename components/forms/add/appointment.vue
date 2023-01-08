@@ -2,7 +2,7 @@
   <v-form v-model="valid" ref="form" @submit.prevent="submit">
     <v-container class="mt-3">
       <v-card-title v-if="isAggregated">
-        Buscar historia clinical
+        Buscar historia clínica
         <v-spacer></v-spacer>
         <v-btn color="primary" fab small elevation="0">
           <v-icon> mdi-magnify </v-icon>
@@ -37,19 +37,19 @@
         <v-col cols="12" md="6">
           <v-text-field
             v-model="data.representativeNumberPhone"
-            label="Numero de telefono"
+            label="Número de teléfono"
             outlined
             v-mask="numberPhoneMask"
             dense
-            placeholder="Introduzca el numero de telefono"
+            placeholder="Introduzca el número de teléfono"
             :rules="rules.defaultText"
           ></v-text-field>
         </v-col>
         <v-col cols="12" md="6">
           <v-text-field
             v-model="data.representativeDirection"
-            label="Direccion"
-            placeholder="Introduzca la direccion"
+            label="Dirección"
+            placeholder="Introduzca la dirección"
             v-mask="upperCaseMask"
             outlined
             dense
@@ -153,7 +153,7 @@
         <v-col cols="12" md="4">
           <v-checkbox
             v-model="data.socialPsychology"
-            label="Psicologia social"
+            label="Psicología social"
             color="primary"
             hide-details
             dense
@@ -162,7 +162,7 @@
         <v-col cols="12" md="4">
           <v-checkbox
             v-model="data.clinicalPsychology"
-            label="Psicologia clinica"
+            label="Psicología clinica"
             color="primary"
             hide-details
             dense
@@ -171,7 +171,7 @@
         <v-col cols="12" md="4">
           <v-checkbox
             v-model="data.advocacy"
-            label="defensoria"
+            label="Defensoria"
             color="primary"
             hide-details
             dense

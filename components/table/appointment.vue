@@ -3,11 +3,11 @@
     <template #default>
       <thead>
         <tr>
-          <th class="text-left">Codigo</th>
+          <th class="text-left">Código</th>
           <th class="text-left">Nombre y apellido del representante</th>
           <th class="text-left">Nombre y apellido del paciente</th>
           <th class="text-left">Fecha pautada</th>
-          <th class="text-left">acciones</th>
+          <th class="text-left">Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -65,7 +65,7 @@ export default {
         clinicHistoryCode: data.clinicHistoryCode,
         representativeFirstName: data.representativeFirstName,
         representativeLastName: data.representativeLastName,
-        representativeNumberPhone: data.numberPhone,
+        representativeNumberPhone: data.representativeNumberPhone,
         representativeDirection: data.representativeDirection,
         patientFirstName: data.patientFirstName,
         patientLastName: data.patientLastName,
@@ -95,6 +95,9 @@ export default {
           "x-access-token": ` ${this.$cookies.get("x-access-token")}`,
         },
         params: {
+          code: "",
+          projectCode: "",
+          appointmentDate: "",
           clinicHistoryCode: null,
           representativeFirstName: "",
           representativeLastName: "",
@@ -104,7 +107,7 @@ export default {
           patientLastName: "",
           patientBornDate: "",
           pediatrics: false,
-          nitritionist: false,
+          nutritionist: false,
           psychiatry: false,
           socialPsychology: false,
           breastfeedingAdvice: false,

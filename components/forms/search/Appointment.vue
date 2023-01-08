@@ -91,13 +91,15 @@
       </v-col>
     </v-row>
     <div class="pa-2">
-      <v-btn class="pa-2" block rounded color="primary" @click="search">Filtrar</v-btn>
+      <v-btn class="pa-2" block rounded color="primary" @click="search"
+        >Filtrar</v-btn
+      >
     </div>
   </v-container>
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapMutations } from "vuex";
 export default {
   name: "searchAppointment",
   props: {},
@@ -130,8 +132,26 @@ export default {
     },
   },
   methods: {
+    ...mapMutations(["setAppointments"]),
     search() {
-      this.socket.emit("searchAppointment", this.data);
+      this.$axios
+        .get("api/appointment", {
+          headers: {
+            "x-access-token": ` ${this.$cookies.get("x-access-token")}`,
+          },
+          params: {
+            code: this.data.code,
+            representativeFirstName: this.data.representativeFirstName,
+            representativeLastName: this.data.representativeLastName,
+            patientFirstName: this.data.patientFirstName,
+            patientLastName: this.data.patientLastName,
+            appointmentDate: this.data.appointmentDate,
+          },
+        })
+        .then(async (resp) => {
+          this.setAppointments(await resp.data);
+          this.$emit("close", false);
+        });
     },
     save(date) {
       this.$refs.menu.save(date);
