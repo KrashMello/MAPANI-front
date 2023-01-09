@@ -137,21 +137,12 @@ export default {
               "x-access-token": ` ${this.$cookies.get("x-access-token")}`,
             },
             params: {
-              clinicHistoryCode: null,
+              code: "",
               representativeFirstName: "",
               representativeLastName: "",
-              representativeNumberPhone: "",
-              representativeDirection: "",
               patientFirstName: "",
               patientLastName: "",
-              patientBornDate: "",
-              pediatrics: false,
-              nitritionist: false,
-              psychiatry: false,
-              socialPsychology: false,
-              breastfeedingAdvice: false,
-              advocacy: false,
-              clinicalPsychology: false,
+              appointmentDate: "",
             },
           })
           .then(async (resp) => {

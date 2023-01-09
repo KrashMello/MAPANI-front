@@ -70,8 +70,9 @@
           <template v-slot:activator="{ on, attrs }">
             <v-text-field
               v-model="data.dateOfEntry"
+              outlined
               label="Fecha de ingreso"
-              prepend-icon="mdi-calendar"
+              prepend-inner-icon="mdi-calendar"
               readonly
               dense
               v-bind="attrs"
@@ -103,8 +104,9 @@
           <template v-slot:activator="{ on, attrs }">
             <v-text-field
               v-model="data.dateOfDischarge"
+              outlined
               label="Fecha de egreso"
-              prepend-icon="mdi-calendar"
+              prepend-inner-icon="mdi-calendar"
               readonly
               dense
               v-bind="attrs"
@@ -126,7 +128,9 @@
       </v-col>
     </v-row>
     <div class="pa-2">
-      <v-btn class="pa-2" block rounded color="primary" @click="search">Filtrar</v-btn>
+      <v-btn class="pa-2" block rounded color="primary" @click="search"
+        >Filtrar</v-btn
+      >
     </div>
   </v-container>
 </template>

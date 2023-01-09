@@ -5,7 +5,6 @@
         <v-text-field
           v-model="data.code"
           label="Codigo"
-          v-mask="'aa-#######'"
           dense
           outlined
           color="primary"
@@ -68,8 +67,9 @@
           <template v-slot:activator="{ on, attrs }">
             <v-text-field
               v-model="data.appointmentDate"
+              outlined
               label="Fecha de cita"
-              prepend-icon="mdi-calendar"
+              prepend-inner-icon="mdi-calendar"
               readonly
               dense
               v-bind="attrs"

@@ -135,13 +135,15 @@ export default {
     },
   },
   methods: {
-    ...mapMutations(["setSponsors", "addSponsorsToProject", "changeDeleteSponsors"]),
+    ...mapMutations([
+      "setSponsors",
+      "addSponsorsToProject",
+      "changeDeleteSponsors",
+    ]),
     select(data) {
-      if (this.isAggregated) 
-        this.addSponsorsToProject(data);
-      else 
-        this.changeDeleteSponsors([data, false]);
-      
+      if (this.isAggregated) this.addSponsorsToProject(data);
+      else this.changeDeleteSponsors([data, false]);
+
       this.$emit("selected", false);
     },
     filter() {

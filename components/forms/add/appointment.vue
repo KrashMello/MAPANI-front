@@ -1,14 +1,14 @@
 <template>
   <v-form v-model="valid" ref="form" @submit.prevent="submit">
     <v-container class="mt-3">
-      <v-card-title v-if="isAggregated">
+      <!-- <v-card-title v-if="isAggregated">
         Buscar historia clínica
         <v-spacer></v-spacer>
         <v-btn color="primary" fab small elevation="0">
           <v-icon> mdi-magnify </v-icon>
         </v-btn>
       </v-card-title>
-      <v-divider></v-divider>
+      <v-divider></v-divider> -->
       <v-card-title>Datos del representante</v-card-title>
       <v-row>
         <v-col cols="12" md="6">
@@ -312,9 +312,12 @@ export default {
               patientLastName: this.data.patientLastName,
               patientBornDate: this.data.patientBornDate,
             },
+            headers: {
+              "x-access-token": `${this.$cookies.get("x-access-token")}`,
+            },
           })
-          .then(() => {
-            this.$emit("close", false);
+          .then((resp) => {
+            this.$emit("close", { showForm: false, resp });
           })
           .catch((err) => {
             console.log(err);

@@ -186,8 +186,9 @@
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
                 v-model="personalData.bornDate"
+                outlined
                 label="Fecha de nacimiento"
-                prepend-icon="mdi-calendar"
+                prepend-inner-icon="mdi-calendar"
                 readonly
                 dense
                 :disabled="personalData.code !== '' ? true : false"

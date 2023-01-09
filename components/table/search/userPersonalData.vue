@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card flat>
+    <v-card flat class="mt-6">
       <v-card-text>
         <v-container>
           <v-row>
@@ -60,7 +60,7 @@
           <th class="text-left">Codigo</th>
           <th class="text-left">cedula</th>
           <th class="text-left">Nombre y apellido</th>
-          <th class="text-left">-</th>
+          <th class="text-left">Elegir</th>
         </tr>
       </thead>
       <tbody>
