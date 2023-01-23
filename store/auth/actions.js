@@ -3,7 +3,7 @@ export default {
     commit("changeLoadingState", true);
     try {
       await this.$axios
-        .post("api/Auth/singIn", {
+        .post("api/Auth/signIn", {
           params: { username: username, password: password },
         })
         .then((resp) => {

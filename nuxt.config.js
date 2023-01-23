@@ -39,13 +39,13 @@ export default {
     "@nuxtjs/pwa",
     //nuxt socket io
     "nuxt-socket-io",
-    'cookie-universal-nuxt',
+    "cookie-universal-nuxt",
   ],
 
   io: {
     sockets: [
       // Required
-      { name: "main", url: "http://localhost:7000", default: true },
+      { name: "main", url: "https://mapani-back.onrender.com", default: true },
     ],
   },
 
@@ -57,7 +57,7 @@ export default {
   },
   proxy: {
     "/api/": {
-      target: "http://localhost:5000/",
+      target: "https://mapani-back.onrender.com",
       pathRewrite: { "^/api/": "" },
       changeOrigin: true,
     },
