@@ -1,6 +1,21 @@
 <template>
   <v-form v-model="valid" ref="form" @submit.prevent="submit">
     <v-container class="mt-3">
+      <v-row>
+        <v-col cols="1">
+          <v-btn
+            color="primary"
+            block
+            rounded
+            @click="
+              () => {
+                this.$router.push(`/panel/modulos`);
+              }
+            "
+            ><v-icon>mdi-arrow-left</v-icon>
+          </v-btn>
+        </v-col>
+      </v-row>
       <v-card-title>Datos del Modulo</v-card-title>
       <v-row>
         <v-col cols="12">
@@ -89,6 +104,7 @@
         </v-col>
       </v-row>
     </v-container>
+    <snackbar />
   </v-form>
 </template>
 
@@ -101,7 +117,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    isAggregated: { type: Boolean, default: false },
+    isAggregated: { type: Boolean, default: true },
     title: { type: String, default: "" },
   },
   data: () => ({
@@ -168,17 +184,12 @@ export default {
     },
   },
   watch: {
-    enabled(val) {
-      if (!val) {
-        this.$refs.form.reset();
-      }
-    },
     menuBornDate(val) {
       val && setTimeout(() => (this.activePicker = "YEAR"));
     },
   },
   methods: {
-    ...mapMutations(["setModule"]),
+    ...mapMutations(["setSnackbar"]),
     submit() {
       if (this.isAggregated) {
         this.$axios
@@ -202,10 +213,11 @@ export default {
             }
           )
           .then((resp) => {
-            this.$emit("close", { showForm: false, resp });
+            this.setSnackbar(resp.data);
+            this.$router.push("/panel/modulos");
           })
           .catch((err) => {
-            console.log(err);
+            this.setSnackbar(err.data);
           });
       } else {
         this.$axios
@@ -230,16 +242,22 @@ export default {
             }
           )
           .then((resp) => {
-            this.$emit("close", { showForm: false, resp });
+            this.setSnackbar(resp.data);
+            this.$router.push("/panel/modulos");
           })
           .catch((err) => {
-            console.log(err);
+            this.setSnackbar(err.data);
           });
       }
     },
     close() {
       this.$emit("close", false);
     },
+  },
+  mounted() {
+    if (this.isAggregated) {
+      this.$refs.form.reset();
+    }
   },
 };
 </script>

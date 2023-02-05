@@ -254,12 +254,20 @@ export default {
     }),
     father() {
       if (this.auth.permissions)
-        return this.auth.permissions.filter((v) => v.fatherCode === null);
+        return this.auth.permissions
+          .filter((v) => v.fatherCode === null)
+          .sort((a, b) => {
+            return a.order - b.order;
+          });
       else return [];
     },
     children() {
       if (this.auth.permissions)
-        return this.auth.permissions.filter((v) => v.fatherCode !== null);
+        return this.auth.permissions
+          .filter((v) => v.fatherCode !== null)
+          .sort((a, b) => {
+            return a.order - b.order;
+          });
       else return [];
     },
   },

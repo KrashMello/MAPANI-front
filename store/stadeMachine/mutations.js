@@ -8,7 +8,7 @@ export default {
   changeStatus(state, status) {
     state.status = status;
   },
-  showResponseSnackbar(state, responseSnackbar) {
-    state.responseSnackbar = responseSnackbar;
+  setSnackbar(state, snackbar) {
+    state.snackbar = snackbar;
   },
 };

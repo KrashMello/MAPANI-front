@@ -10,8 +10,7 @@
             rounded
             @click="
               () => {
-                showForm = true;
-                formAdd = true;
+                this.$router.push('/panel/modulos/agregar');
               }
             "
           >
@@ -37,129 +36,97 @@
         </v-col>
       </v-row>
       <v-row>
-        <v-col :cols="tableCols">
+        <v-col cols="12">
           <v-card class="overflow-hidden" rounded="xl">
-            <v-sheet class="overflow-y-auto" height="62vh" max-height="62vh">
+            <v-sheet class="overflow-y-auto" height="50vh" max-height="50vh">
               <v-card-text>
-                <table-modules @modify="modifyModule" />
+                <table-modules />
               </v-card-text>
             </v-sheet>
+            <v-card-actions>
+              <v-container v-if="paginationCount > 1">
+                <v-row justify="center">
+                  <v-col cols="8">
+                    <v-container class="max-width">
+                      <v-pagination
+                        v-model="page"
+                        class="my-4"
+                        :length="paginationCount"
+                        @input="updatePage"
+                      ></v-pagination>
+                    </v-container>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card-actions>
           </v-card>
-        </v-col>
-        <v-col cols="5">
-          <v-expand-transition>
-            <cards-forms
-              v-show="showForm"
-              :title="
-                formAdd === true
-                  ? `Agregar Nuevo Modulo`
-                  : `Modificar Modulo ${mod.code}`
-              "
-              @close="closeForm"
-            >
-              <template #form>
-                <forms-add-modules
-                  :enabled="showForm"
-                  :is-aggregated="formAdd"
-                  @close="closeForm"
-                />
-              </template>
-            </cards-forms>
-          </v-expand-transition>
         </v-col>
       </v-row>
     </v-container>
-    <!-- dialog form  -->
-    <!-- <Dialog-tables -->
-    <!--   title="Buscar Persona" -->
-    <!--   :dialog="searchPersonDialog" -->
-    <!--   @close="changeSearchDialog" -->
-    <!-- > -->
-    <!--   <template #table> -->
-    <!--     <table-search-user-personal-data @selected="changeSearchDialog" /> -->
-    <!--   </template> -->
-    <!-- </Dialog-tables> -->
-    <!-- drawer for search -->
     <drawer-search
       :show-drawer="showDrawer"
       title="Filtrar"
       @close="closeDrawerSearch"
     >
       <template #form>
-        <forms-search-modules @close="closeDrawerSearch" />
+        <forms-search-modules @filter="filter" @close="closeDrawerSearch" />
       </template>
     </drawer-search>
+    <snackbar />
   </div>
 </template>
 
 <script>
-import { mapMutations, mapGetters } from "vuex";
+import { mapGetters, mapMutations } from "vuex";
 export default {
   name: "modulesPanel",
   data: () => {
     return {
-      dialog: {
-        show: false,
-        formAdd: true,
-      },
-      showForm: false,
-      formAdd: true,
-      tableCols: 12,
+      paginationCount: 0,
       showDrawer: false,
-      searchPersonDialog: false,
     };
   },
   computed: {
-    ...mapGetters({
-      mod: "getModule",
-    }),
-  },
-  watch: {
-    showForm(val) {
-      if (!val)
-        setTimeout(() => {
-          this.tableCols = 12;
-        }, 300);
-      else this.tableCols = 7;
+    ...mapGetters({ searchOptions: "getModuleSearchOptions" }),
+    page() {
+      return this.searchOptions.page;
     },
   },
-
   methods: {
-    ...mapMutations(["changePageTitle", "setModule", "setModules"]),
-    closeForm(data) {
-      this.showForm = data.showForm;
-      this.setModule({
-        code: "",
-        name: "",
-        src: "",
-        icon: "",
-        unabled: false,
-        hasChildren: false,
-        order: 0,
-        fatherCode: "",
-      });
-      if (data.resp)
-        this.$axios
-          .get("api/modules", {
-            headers: {
-              "x-access-token": ` ${this.$cookies.get("x-access-token")}`,
-            },
-            params: {
-              code: "",
-              name: "",
-              unabled: false,
-              fatherCode: "",
-            },
-          })
-          .then(async (resp) => {
-            this.setModules(await resp.data);
-          });
+    ...mapMutations([
+      "changePageTitle",
+      "setModules",
+      "setPaginationModulePage",
+      "setPaginationModuleLimit",
+    ]),
+    filter() {
+      this.$axios
+        .get("api/modules", {
+          headers: {
+            "x-access-token": ` ${this.$cookies.get("x-access-token")}`,
+          },
+          params: this.searchOptions,
+        })
+        .then(async (resp) => {
+          let result = await resp.data;
+          this.paginationCount = result.pagination;
+          this.setModules(await result.modules);
+        });
     },
-    modifyModule(data) {
-      if (!this.showForm) {
-        this.showForm = data.showForm;
-        this.formAdd = data.formAdd;
-      }
+    updatePage(page) {
+      this.setPaginationModulePage(page);
+      this.$axios
+        .get("api/modules", {
+          headers: {
+            "x-access-token": ` ${this.$cookies.get("x-access-token")}`,
+          },
+          params: this.searchOptions,
+        })
+        .then(async (resp) => {
+          let result = await resp.data;
+          this.paginationCount = result.pagination;
+          this.setModules(await result.modules);
+        });
     },
     closeDrawerSearch(data) {
       this.showDrawer = data;
@@ -170,6 +137,18 @@ export default {
   },
   created() {
     this.changePageTitle("Modulos");
+    this.$axios
+      .get("api/modules", {
+        headers: {
+          "x-access-token": ` ${this.$cookies.get("x-access-token")}`,
+        },
+        params: this.searchOptions,
+      })
+      .then(async (resp) => {
+        let result = await resp.data;
+        this.paginationCount = result.pagination;
+        this.setModules(await result.modules);
+      });
   },
 };
 </script>

@@ -10,8 +10,7 @@
             rounded
             @click="
               () => {
-                showForm = true;
-                formAdd = true;
+                this.$router.push(`/panel/empleados/agregar`);
               }
             "
           >
@@ -33,49 +32,33 @@
         </v-col>
       </v-row>
       <v-row>
-        <v-col :cols="tableCols">
+        <v-col cols="12">
           <v-card class="overflow-hidden" rounded="xl">
-            <v-sheet class="overflow-y-auto" height="62vh" max-height="62vh">
+            <v-sheet class="overflow-y-auto" height="62vh" max-height="50vh">
               <v-card-text>
-                <table-employed @modify="modifyEmployed" />
+                <table-employed />
               </v-card-text>
             </v-sheet>
+            <v-card-actions>
+              <v-container v-if="paginationCount > 1">
+                <v-row justify="center">
+                  <v-col cols="8">
+                    <v-container class="max-width">
+                      <v-pagination
+                        v-model="page"
+                        class="my-4"
+                        :length="paginationCount"
+                        @input="updatePage"
+                      ></v-pagination>
+                    </v-container>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card-actions>
           </v-card>
-        </v-col>
-        <v-col cols="5">
-          <v-expand-transition>
-            <cards-forms
-              v-show="showForm"
-              :title="
-                formAdd === true
-                  ? `Agregar Nuevo Empleado`
-                  : `Modificar Empleado ${employed.code}`
-              "
-              @close="closeForm"
-            >
-              <template #form>
-                <forms-add-employed
-                  :enabled="showForm"
-                  :is-aggregated="formAdd"
-                  @search-person="changeSearchDialog"
-                  @close="closeForm"
-                />
-              </template>
-            </cards-forms>
-          </v-expand-transition>
         </v-col>
       </v-row>
     </v-container>
-    <!-- dialog form -->
-    <Dialog-tables
-      title="Buscar Persona"
-      :dialog="searchPersonDialog"
-      @close="changeSearchDialog"
-    >
-      <template #table>
-        <table-search-user-personal-data @selected="changeSearchDialog" />
-      </template>
-    </Dialog-tables>
 
     <!-- drawer for search  -->
     <drawer-search
@@ -93,108 +76,26 @@
 </template>
 
 <script>
-import { mapMutations, mapGetters } from "vuex";
+import { mapMutations } from "vuex";
 export default {
   name: "EmpleadosPanel",
   data: () => {
     return {
-      dialog: {
-        show: false,
-        formAdd: true,
-      },
-      showForm: false,
-      formAdd: true,
-      tableCols: 12,
+      paginationCount: 0,
+      page: 1,
+      limit: 10,
+      offset: 0,
       showDrawer: false,
-      searchPersonDialog: false,
     };
   },
-  computed: {
-    ...mapGetters({
-      employed: "getEmployed",
-    }),
-  },
-  watch: {
-    showForm(val) {
-      if (!val)
-        setTimeout(() => {
-          this.tableCols = 12;
-        }, 300);
-      else this.tableCols = 7;
-    },
-  },
-
   methods: {
-    ...mapMutations([
-      "changePageTitle",
-      "setEmployeds",
-      "setEmployed",
-      "setUserPersonalData",
-    ]),
-    closeForm(data) {
-      this.showForm = data.showForm;
-      this.setEmployed({
-        code: "",
-        personalDataCode: "",
-        jobPositionCode: "",
-        jobPositionName: "",
-        departamentCode: "",
-        departamentName: "",
-        dateOfEntry: "",
-        dateOfDischarge: "",
-      });
-      this.setUserPersonalData({
-        code: "",
-        firstName: "",
-        lastName: "",
-        genderCode: "",
-        documentTypeCode: "",
-        dni: "",
-        bornDate: "",
-        martialStatusCode: "",
-        disability: false,
-        disabilityTypeCode: "",
-        ethnicGroup: false,
-        ethnicDescription: "",
-        parrishCode: "",
-        direction: "",
-        phoneNumber: "",
-      });
-      if (data.resp)
-        this.$axios
-          .get("api/employed", {
-            headers: {
-              "x-access-token": ` ${this.$cookies.get("x-access-token")}`,
-            },
-            params: {
-              jobPositionCode: "",
-              regionCode: "",
-              stadeCode: "",
-              municipalityCode: "",
-              parrishCode: "",
-              dni: "",
-              dateOfEntry: "",
-              dateOfDiscarge: "",
-              departamentCode: "",
-            },
-          })
-          .then(async (resp) => {
-            this.setEmployeds(await resp.data);
-          });
+    ...mapMutations(["changePageTitle", "setEmployeds"]),
+    updatePage(page) {
+      console.log(page);
     },
 
-    changeSearchDialog(data) {
-      this.searchPersonDialog = data;
-    },
     closeDrawerSearch(data) {
       this.showDrawer = data;
-    },
-    modifyEmployed(data) {
-       if (!this.showForm) {
-        this.showForm = data.showForm;
-        this.formAdd = data.formAdd;
-      }
-
     },
     selectItem(i) {
       this.selectedItemTable = i;
@@ -203,8 +104,31 @@ export default {
       this.selectedItemTable = null;
     },
   },
-  created() {
+  mounted() {
     this.changePageTitle("Empleados");
+    this.$axios
+      .get("api/employed", {
+        headers: {
+          "x-access-token": ` ${this.$cookies.get("x-access-token")}`,
+        },
+        params: {
+          jobPositionCode: "",
+          regionCode: "",
+          stadeCode: "",
+          municipalityCode: "",
+          parrishCode: "",
+          dni: "",
+          dateOfEntry: "",
+          dateOfDiscarge: "",
+          departamentCode: "",
+          limit: this.limit,
+        },
+      })
+      .then(async (resp) => {
+        let result = await resp.data;
+        this.paginationCount = result.pagination;
+        this.setEmployeds(result.employed);
+      });
   },
 };
 </script>

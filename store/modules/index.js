@@ -18,7 +18,10 @@ const defaultState = {
     code: "",
     name: "",
     unabled: false,
+    hasChildren: false,
     fatherCode: "",
+    limit: 10,
+    page: 1,
   },
 };
 

@@ -8,7 +8,7 @@ export default {
   getStatus(state) {
     return state.status;
   },
-  getResponseSnackbar: (state) => {
-    return state.responseSnackbar;
+  getSnackbar: (state) => {
+    return state.snackbar;
   },
 };

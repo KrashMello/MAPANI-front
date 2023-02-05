@@ -75,7 +75,7 @@ export default {
         fatherCode: data.fatherCode,
         order: data.order,
       });
-      this.$emit("modify", { showForm: true, formAdd: false });
+      this.$router.push("/panel/modulos/modificar");
     },
     selectItem(i) {
       this.selectedItemTable = i;
@@ -83,23 +83,6 @@ export default {
     unSelectItem() {
       this.selectedItemTable = null;
     },
-  },
-  mounted() {
-    this.$axios
-      .get("api/modules", {
-        headers: {
-          "x-access-token": ` ${this.$cookies.get("x-access-token")}`,
-        },
-        params: {
-          code: "",
-          name: "",
-          unabled: false,
-          fatherCode: "",
-        },
-      })
-      .then(async (resp) => {
-        this.setModules(await resp.data);
-      });
   },
 };
 </script>

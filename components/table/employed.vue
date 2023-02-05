@@ -6,7 +6,7 @@
         <th class="text-left">Nombre y apellido</th>
         <th class="text-left">Departamento</th>
         <th class="text-left">Cargo</th>
-        <th class="text-left">acciones</th>
+        <th class="text-left">Opciones</th>
       </tr>
     </thead>
     <tbody v-if="employeds.length > 0">
@@ -43,7 +43,7 @@
 <script>
 import { mapGetters, mapMutations } from "vuex";
 export default {
-  name: "usersTable",
+  name: "employedTable",
   data() {
     return {
       selectedItemTable: null,
@@ -86,7 +86,7 @@ export default {
       };
       this.setEmployed(employedData);
       this.setUserPersonalData(userPersonalData);
-      this.$emit("modify", { showForm: true, formAdd: false });
+      this.$router.push("/panel/empleados/modificar");
     },
     selectItem(i) {
       this.selectedItemTable = i;
@@ -94,28 +94,6 @@ export default {
     unSelectItem() {
       this.selectedItemTable = null;
     },
-  },
-  mounted() {
-    this.$axios
-      .get("api/employed", {
-        headers: {
-          "x-access-token": ` ${this.$cookies.get("x-access-token")}`,
-        },
-        params: {
-          jobPositionCode: "",
-          regionCode: "",
-          stadeCode: "",
-          municipalityCode: "",
-          parrishCode: "",
-          dni: "",
-          dateOfEntry: "",
-          dateOfDiscarge: "",
-          departamentCode: "",
-        },
-      })
-      .then(async (resp) => {
-        this.setEmployeds(await resp.data);
-      });
   },
 };
 </script>

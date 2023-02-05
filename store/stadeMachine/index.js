@@ -6,7 +6,7 @@ const defaultState = {
   loading: false,
   pageTitle: "Inicio",
   status: { code: 0, message: "" },
-  responseSnackbar: { code: 0, type: "", message: "" },
+  snackbar: { model: false, status: 0, message: "" },
 };
 
 const inBrowser = typeof window !== "undefined";

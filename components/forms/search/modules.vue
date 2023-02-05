@@ -46,7 +46,9 @@
       </v-col>
     </v-row>
     <div class="pa-2">
-      <v-btn class="pa-2" block rounded color="primary" @click="search">Filtrar</v-btn>
+      <v-btn class="pa-2" block rounded color="primary" @click="search"
+        >Filtrar</v-btn
+      >
     </div>
   </v-container>
 </template>
@@ -91,22 +93,7 @@ export default {
   methods: {
     ...mapMutations(["setModules"]),
     search() {
-      this.$axios
-        .get("api/modules", {
-          headers: {
-            "x-access-token": ` ${this.$cookies.get("x-access-token")}`,
-          },
-          params: {
-            code: this.data.code,
-            name: this.data.name,
-            unabled: this.data.unabled,
-            fatherCode: this.data.fatherCode,
-          },
-        })
-        .then(async (resp) => {
-          this.setModules(await resp.data);
-          this.$emit("close", false);
-        });
+      this.$emit("filter");
     },
   },
 };

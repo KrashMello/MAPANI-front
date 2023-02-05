@@ -1,13 +1,36 @@
 <template>
   <v-form v-model="valid" ref="form" @submit.prevent="submit">
     <v-container class="mt-3">
-      <v-card-title v-if="isAggregated">
-        Buscar persona
-        <v-spacer></v-spacer>
-        <v-btn color="primary" fab small elevation="0" @click="searchPerson">
-          <v-icon> mdi-magnify </v-icon>
-        </v-btn>
-      </v-card-title>
+      <v-row align="center" class="">
+        <v-col cols="1">
+          <v-btn
+            color="primary"
+            block
+            rounded
+            @click="
+              () => {
+                this.$router.push(`/panel/empleados`);
+              }
+            "
+            ><v-icon>mdi-arrow-left</v-icon>
+          </v-btn>
+        </v-col>
+        <v-col cols="11" v-if="isAggregated">
+          <v-card-title>
+            Buscar persona
+            <v-spacer></v-spacer>
+            <v-btn
+              color="primary"
+              fab
+              small
+              elevation="0"
+              @click="searchPerson"
+            >
+              <v-icon> mdi-magnify </v-icon>
+            </v-btn>
+          </v-card-title>
+        </v-col>
+      </v-row>
       <v-divider />
       <v-card-title>Datos Mapani</v-card-title>
       <v-row>
@@ -363,10 +386,6 @@ import { mapGetters } from "vuex";
 export default {
   name: "formEmployed",
   props: {
-    enabled: {
-      type: Boolean,
-      default: false,
-    },
     isAggregated: { type: Boolean, default: false },
   },
   data: () => ({
@@ -424,6 +443,7 @@ export default {
       ],
     },
   }),
+
   computed: {
     ...mapGetters({
       employed: "getEmployed",
@@ -437,14 +457,8 @@ export default {
     },
   },
   watch: {
-    enabled(val) {
-      if (!val) {
-        this.$refs.form.reset();
-      }
-      
-    },
-   personalData(oldVal,newVal){
-    if(oldVal.code !== newVal.code && !this.isAggregated){
+    personalData(oldVal, newVal) {
+      if (oldVal.code !== newVal.code && !this.isAggregated) {
         this.chargeStade();
         this.chargeMunicipality();
         this.chargeParrish();
@@ -703,7 +717,11 @@ export default {
       .catch((err) => {
         console.log(err);
       });
-    if (!this.isAggregated) {
+  },
+  mounted() {
+    if (this.isAggregated) {
+      this.$refs.form.reset();
+    } else {
       this.chargeStade();
       this.chargeMunicipality();
       this.chargeParrish();
