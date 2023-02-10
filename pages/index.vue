@@ -1,6 +1,6 @@
 <template>
   <v-row justify="center" align="center" class="log">
-    <v-col cols="5">
+    <v-col sm="12" md="5" cols="12">
       <v-card :loading="loading">
         <v-card-title class="justify-center">
           <img width="99%" src="/logo-1300x347.png" />

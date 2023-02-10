@@ -102,9 +102,6 @@ export default {
     filter() {
       this.$axios
         .get("api/modules", {
-          headers: {
-            "x-access-token": ` ${this.$cookies.get("x-access-token")}`,
-          },
           params: this.searchOptions,
         })
         .then(async (resp) => {
@@ -117,9 +114,6 @@ export default {
       this.setPaginationModulePage(page);
       this.$axios
         .get("api/modules", {
-          headers: {
-            "x-access-token": ` ${this.$cookies.get("x-access-token")}`,
-          },
           params: this.searchOptions,
         })
         .then(async (resp) => {
@@ -139,9 +133,6 @@ export default {
     this.changePageTitle("Modulos");
     this.$axios
       .get("api/modules", {
-        headers: {
-          "x-access-token": ` ${this.$cookies.get("x-access-token")}`,
-        },
         params: this.searchOptions,
       })
       .then(async (resp) => {

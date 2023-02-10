@@ -193,25 +193,17 @@ export default {
     submit() {
       if (this.isAggregated) {
         this.$axios
-          .post(
-            "api/modules",
-            {
-              params: {
-                name: this.data.name,
-                src: this.data.src,
-                icon: this.data.icon,
-                unabled: this.data.unabled,
-                hasChildren: this.data.hasChildren,
-                order: this.data.order,
-                fatherCode: this.data.fatherCode,
-              },
+          .post("api/modules", {
+            params: {
+              name: this.data.name,
+              src: this.data.src,
+              icon: this.data.icon,
+              unabled: this.data.unabled,
+              hasChildren: this.data.hasChildren,
+              order: this.data.order,
+              fatherCode: this.data.fatherCode,
             },
-            {
-              headers: {
-                "x-access-token": `${this.$cookies.get("x-access-token")}`,
-              },
-            }
-          )
+          })
           .then((resp) => {
             this.setSnackbar(resp.data);
             this.$router.push("/panel/modulos");
@@ -221,26 +213,18 @@ export default {
           });
       } else {
         this.$axios
-          .put(
-            "api/modules",
-            {
-              params: {
-                code: this.data.code,
-                name: this.data.name,
-                src: this.data.src,
-                icon: this.data.icon,
-                unabled: this.data.unabled,
-                hasChildren: this.data.hasChildren,
-                order: this.data.order,
-                fatherCode: this.data.fatherCode,
-              },
+          .put("api/modules", {
+            params: {
+              code: this.data.code,
+              name: this.data.name,
+              src: this.data.src,
+              icon: this.data.icon,
+              unabled: this.data.unabled,
+              hasChildren: this.data.hasChildren,
+              order: this.data.order,
+              fatherCode: this.data.fatherCode,
             },
-            {
-              headers: {
-                "x-access-token": `${this.$cookies.get("x-access-token")}`,
-              },
-            }
-          )
+          })
           .then((resp) => {
             this.setSnackbar(resp.data);
             this.$router.push("/panel/modulos");

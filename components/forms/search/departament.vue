@@ -23,27 +23,6 @@
           placeholder="Ingrese el nombre del modulo"
         ></v-text-field>
       </v-col>
-      <v-col cols="12" md="12">
-        <v-checkbox
-          v-model="data.unabled"
-          label="Disabilitados"
-          color="primary"
-          hide-details
-          dense
-        />
-      </v-col>
-
-      <v-col cols="12">
-        <v-text-field
-          v-model="data.fatherCode"
-          label="Codigo del modulo padre"
-          v-mask="codeMask"
-          dense
-          outlined
-          color="primary"
-          placeholder="Ingrese el codigo del modulo padre"
-        ></v-text-field>
-      </v-col>
     </v-row>
     <div class="pa-2">
       <v-btn class="pa-2" block rounded color="primary" @click="search"
@@ -56,7 +35,7 @@
 <script>
 import { mapGetters } from "vuex";
 export default {
-  name: "searchUsers",
+  name: "searchDepartament",
   data() {
     return {
       upperCaseMask: {
@@ -69,7 +48,7 @@ export default {
         },
       },
       codeMask: {
-        mask: "UUU-########",
+        mask: "UUUUU-########",
         tokens: {
           U: {
             pattern: /[a-zA-Z]/,
@@ -84,7 +63,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      searchOptions: "getModuleSearchOptions",
+      searchOptions: "getDepartamentSearchOptions",
     }),
     data() {
       return this.searchOptions;
@@ -97,5 +76,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped></style>

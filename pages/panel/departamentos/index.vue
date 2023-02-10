@@ -10,11 +10,11 @@
             rounded
             @click="
               () => {
-                this.$router.push(`/panel/empleados/agregar`);
+                this.$router.push(`/panel/departamentos/agregar`);
               }
             "
           >
-            Agregar empleado
+            Agregar departamento
             <v-icon dark right>mdi-plus</v-icon>
           </v-btn>
         </v-col>
@@ -32,11 +32,11 @@
         </v-col>
       </v-row>
       <v-row>
-        <v-col :cols="tableCols">
+        <v-col cols="12">
           <v-card class="overflow-hidden" rounded="xl">
             <v-sheet class="overflow-y-auto" height="62vh" max-height="50vh">
               <v-card-text>
-                <table-employed />
+                <table-departament />
               </v-card-text>
             </v-sheet>
             <v-card-actions>
@@ -67,35 +67,66 @@
       @close="closeDrawerSearch"
     >
       <template #form>
-        <forms-search-employed
+        <forms-search-departament
+          @filter="filter"
           @close="closeDrawerSearch"
-        ></forms-search-employed>
+        ></forms-search-departament>
       </template>
     </drawer-search>
+    <snackbar />
   </div>
 </template>
 
 <script>
-import { mapMutations } from "vuex";
+import { mapGetters, mapMutations } from "vuex";
 export default {
-  name: "EmpleadosPanel",
+  name: "departamentosPanel",
   data: () => {
     return {
-      dialog: {
-        show: false,
-        formAdd: true,
-      },
       paginationCount: 0,
-      page: 1,
-      limit: 10,
-      offset: 0,
+
       showDrawer: false,
     };
   },
+  computed: {
+    ...mapGetters({ searchOptions: "getDepartamentSearchOptions" }),
+    page() {
+      return this.searchOptions.page;
+    },
+  },
+
   methods: {
-    ...mapMutations(["changePageTitle", "setEmployeds"]),
+    ...mapMutations([
+      "changePageTitle",
+      "setDepartaments",
+      "setPaginationModulePage",
+      "setPaginationModuleLimit",
+    ]),
+    filter() {
+      this.$axios
+        .get("api/departament", {
+          params: this.searchOptions,
+        })
+        .then(async (resp) => {
+          let result = await resp.data;
+          this.paginationCount = result.pagination;
+          this.setDepartaments(result.departaments);
+        });
+    },
     updatePage(page) {
-      console.log(page);
+      this.setPaginationModulePage(page);
+      this.$axios
+        .get("api/departament", {
+          headers: {
+            "x-access-token": ` ${this.$cookies.get("x-access-token")}`,
+          },
+          params: this.searchOptions,
+        })
+        .then(async (resp) => {
+          let result = await resp.data;
+          this.paginationCount = result.pagination;
+          this.setDepartaments(result.departaments);
+        });
     },
 
     closeDrawerSearch(data) {
@@ -109,26 +140,18 @@ export default {
     },
   },
   mounted() {
-    this.changePageTitle("Empleados");
+    this.changePageTitle("Departamentos");
     this.$axios
-      .get("api/employed", {
-        params: {
-          jobPositionCode: "",
-          regionCode: "",
-          stadeCode: "",
-          municipalityCode: "",
-          parrishCode: "",
-          dni: "",
-          dateOfEntry: "",
-          dateOfDiscarge: "",
-          departamentCode: "",
-          limit: this.limit,
+      .get("api/departament", {
+        headers: {
+          "x-access-token": ` ${this.$cookies.get("x-access-token")}`,
         },
+        params: this.searchOptions,
       })
       .then(async (resp) => {
         let result = await resp.data;
         this.paginationCount = result.pagination;
-        this.setEmployeds(result.employed);
+        this.setDepartaments(result.departaments);
       });
   },
 };

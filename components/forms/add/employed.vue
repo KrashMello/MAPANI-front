@@ -486,37 +486,29 @@ export default {
       const phoneNumber = this.personalData.phoneNumber.replace(re, "");
       if (this.isAggregated) {
         this.$axios
-          .post(
-            "api/employed",
-            {
-              params: {
-                personalDataCode: this.personalData.code,
-                jobPositionCode: this.data.jobPositionCode,
-                departamentCode: this.data.departamentCode,
-                dateOfEntry: this.data.dateOfEntry,
-                dateOfDischarge: this.data.dateOfDischarge,
-                firstName: this.personalData.firstName,
-                lastName: this.personalData.lastName,
-                genderCode: this.personalData.genderCode,
-                documentTypeCode: this.personalData.documentTypeCode,
-                dni: this.personalData.dni,
-                bornDate: this.personalData.bornDate,
-                martialStatusCode: this.personalData.martialStatusCode,
-                disability: this.personalData.disability,
-                disabilityTypeCode: this.personalData.disabilityTypeCode,
-                ethnicGroup: this.personalData.ethnicGroup,
-                ethnicDescription: this.personalData.ethnicDescription,
-                parrishCode: this.personalData.parrishCode,
-                direction: this.personalData.direction,
-                numberPhone: phoneNumber,
-              },
+          .post("api/employed", {
+            params: {
+              personalDataCode: this.personalData.code,
+              jobPositionCode: this.data.jobPositionCode,
+              departamentCode: this.data.departamentCode,
+              dateOfEntry: this.data.dateOfEntry,
+              dateOfDischarge: this.data.dateOfDischarge,
+              firstName: this.personalData.firstName,
+              lastName: this.personalData.lastName,
+              genderCode: this.personalData.genderCode,
+              documentTypeCode: this.personalData.documentTypeCode,
+              dni: this.personalData.dni,
+              bornDate: this.personalData.bornDate,
+              martialStatusCode: this.personalData.martialStatusCode,
+              disability: this.personalData.disability,
+              disabilityTypeCode: this.personalData.disabilityTypeCode,
+              ethnicGroup: this.personalData.ethnicGroup,
+              ethnicDescription: this.personalData.ethnicDescription,
+              parrishCode: this.personalData.parrishCode,
+              direction: this.personalData.direction,
+              numberPhone: phoneNumber,
             },
-            {
-              headers: {
-                "x-access-token": `${this.$cookies.get("x-access-token")}`,
-              },
-            }
-          )
+          })
           .then((resp) => {
             this.$emit("close", { showForm: false, resp });
           })
@@ -525,38 +517,30 @@ export default {
           });
       } else {
         this.$axios
-          .put(
-            "api/employed",
-            {
-              params: {
-                employedCode: this.data.code,
-                personalDataCode: this.data.personalDataCode,
-                jobPositionCode: this.data.jobPositionCode,
-                departamentCode: this.data.departamentCode,
-                dateOfEntry: this.data.dateOfEntry,
-                dateOfDischarge: this.data.dateOfDischarge,
-                firstName: this.personalData.firstName,
-                lastName: this.personalData.lastName,
-                genderCode: this.personalData.genderCode,
-                documentTypeCode: this.personalData.documentTypeCode,
-                dni: this.personalData.dni,
-                bornDate: this.personalData.bornDate,
-                martialStatusCode: this.personalData.martialStatusCode,
-                disability: this.personalData.disability,
-                disabilityTypeCode: this.personalData.disabilityTypeCode,
-                ethnicGroup: this.personalData.ethnicGroup,
-                ethnicDescription: this.personalData.ethnicDescription,
-                parrishCode: this.personalData.parrishCode,
-                direction: this.personalData.direction,
-                numberPhone: phoneNumber,
-              },
+          .put("api/employed", {
+            params: {
+              employedCode: this.data.code,
+              personalDataCode: this.data.personalDataCode,
+              jobPositionCode: this.data.jobPositionCode,
+              departamentCode: this.data.departamentCode,
+              dateOfEntry: this.data.dateOfEntry,
+              dateOfDischarge: this.data.dateOfDischarge,
+              firstName: this.personalData.firstName,
+              lastName: this.personalData.lastName,
+              genderCode: this.personalData.genderCode,
+              documentTypeCode: this.personalData.documentTypeCode,
+              dni: this.personalData.dni,
+              bornDate: this.personalData.bornDate,
+              martialStatusCode: this.personalData.martialStatusCode,
+              disability: this.personalData.disability,
+              disabilityTypeCode: this.personalData.disabilityTypeCode,
+              ethnicGroup: this.personalData.ethnicGroup,
+              ethnicDescription: this.personalData.ethnicDescription,
+              parrishCode: this.personalData.parrishCode,
+              direction: this.personalData.direction,
+              numberPhone: phoneNumber,
             },
-            {
-              headers: {
-                "x-access-token": `${this.$cookies.get("x-access-token")}`,
-              },
-            }
-          )
+          })
           .then((resp) => {
             this.$emit("close", { showForm: false, resp });
           })
@@ -568,9 +552,6 @@ export default {
     chargeStade() {
       this.$axios
         .get("api/stade", {
-          headers: {
-            "x-access-token": `${this.$cookies.get("x-access-token")}`,
-          },
           params: { regionCode: this.personalData.regionCode },
         })
         .then((response) => {
@@ -583,10 +564,6 @@ export default {
     chargeMunicipality() {
       this.$axios
         .get("api/municipality", {
-          headers: {
-            "x-access-token": `${this.$cookies.get("x-access-token")}`,
-          },
-
           params: { stadeCode: this.personalData.stadeCode },
         })
         .then((response) => {
@@ -599,10 +576,6 @@ export default {
     chargeParrish() {
       this.$axios
         .get("api/parrish", {
-          headers: {
-            "x-access-token": `${this.$cookies.get("x-access-token")}`,
-          },
-
           params: { municipalityCode: this.personalData.municipalityCode },
         })
         .then((response) => {
@@ -630,11 +603,7 @@ export default {
   },
   created() {
     this.$axios
-      .get("api/jobPosition", {
-        headers: {
-          "x-access-token": `${this.$cookies.get("x-access-token")}`,
-        },
-      })
+      .get("api/jobPosition", {})
       .then((response) => {
         this.jobPositions = response.data;
         // console.log(response.data)
@@ -643,11 +612,7 @@ export default {
         console.log(err);
       });
     this.$axios
-      .get("api/departament", {
-        headers: {
-          "x-access-token": `${this.$cookies.get("x-access-token")}`,
-        },
-      })
+      .get("api/departament", {})
       .then((response) => {
         this.departaments = response.data;
       })
@@ -655,11 +620,7 @@ export default {
         console.log(err);
       });
     this.$axios
-      .get("api/gender", {
-        headers: {
-          "x-access-token": `${this.$cookies.get("x-access-token")}`,
-        },
-      })
+      .get("api/gender", {})
       .then((response) => {
         this.genders = response.data;
       })
@@ -667,11 +628,7 @@ export default {
         console.log(err);
       });
     this.$axios
-      .get("api/martialStatus", {
-        headers: {
-          "x-access-token": `${this.$cookies.get("x-access-token")}`,
-        },
-      })
+      .get("api/martialStatus", {})
       .then((response) => {
         this.martialStatus = response.data;
       })
@@ -680,11 +637,7 @@ export default {
       });
 
     this.$axios
-      .get("api/documentType", {
-        headers: {
-          "x-access-token": `${this.$cookies.get("x-access-token")}`,
-        },
-      })
+      .get("api/documentType", {})
       .then((response) => {
         this.documentTypes = response.data;
       })
@@ -693,11 +646,7 @@ export default {
       });
 
     this.$axios
-      .get("api/disability", {
-        headers: {
-          "x-access-token": `${this.$cookies.get("x-access-token")}`,
-        },
-      })
+      .get("api/disability", {})
       .then((response) => {
         this.disabilitys = response.data;
       })
@@ -706,11 +655,7 @@ export default {
       });
 
     this.$axios
-      .get("api/region", {
-        headers: {
-          "x-access-token": `${this.$cookies.get("x-access-token")}`,
-        },
-      })
+      .get("api/region", {})
       .then((response) => {
         this.regions = response.data;
       })

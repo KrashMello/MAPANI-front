@@ -11,7 +11,7 @@ import employed from "./employed";
 import permissions from "./permissions";
 import sponsor from "./sponsor";
 import project from "./project";
-
+import departament from "./departament";
 const createStore = () => {
   return new Vuex.Store({
     namespaced: true,
@@ -24,10 +24,11 @@ const createStore = () => {
       person: person,
       appoinment: appoinment,
       socket: socket,
-      employed : employed,
+      employed: employed,
       permissions: permissions,
       sponsor: sponsor,
       project: project,
+      departament: departament,
     },
   });
 };
